@@ -4,6 +4,58 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-
+// form code based on tut: https://javebratt.com/ionic-firebase-tutorial-auth/
+<ion-content padding>
+  <div class = "centred-body">
+    <form [formGroup]="loginForm">
+      <ion-item>
+        <ion-label position="stacked" class ="form-label">Email</ion-label>
+        <ion-input
+          formControlName="email"
+          type="email"
+          placeholder="Email Address"
+          [class.invalid]="!loginForm.controls['email'].valid &&
+          loginForm.controls['email'].touched"
+        >
+        </ion-input>
+      </ion-item>
+      <ion-item
+        class="error-message"
+        *ngIf="!loginForm.controls['email'].valid &&
+            loginForm.controls['email'].touched"
+      >
+        <ion-label>Please enter a valid email address.</ion-label>
+      </ion-item>
+    
+      <ion-item>
+        <ion-label position="stacked" class ="form-label">Password</ion-label>
+        <ion-input
+          formControlName="password"
+          type="password"
+          placeholder="Password"
+          [class.invalid]="!loginForm.controls['password'].valid&& loginForm.controls['password'].touched"
+        >
+        </ion-input>
+      </ion-item>
+      <ion-item
+        class="error-message"
+        *ngIf="!loginForm.controls['password'].valid
+          && loginForm.controls['password'].touched"
+      >
+        <ion-label>Password needs to have at least 1 character.</ion-label>
+      </ion-item>
+    
+      <ion-button (click)="loginUser(loginForm)" expand="block" [disabled]="!loginForm.valid">
+        Log In
+      </ion-button>
+    </form>
+      
+    <ion-button expand="block" fill="clear" routerLink="/signup">
+      Sign up
+    </ion-button>
+    
+    <ion-button expand="block" fill="clear" routerLink="/reset-password">
+      Forgotten Password?
+    </ion-button>
+</div>
 </ion-content>
