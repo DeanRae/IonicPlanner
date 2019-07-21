@@ -11,6 +11,7 @@
       <ion-col >
         <form [formGroup]="loginForm">
           <ion-item>
+            <!-- login email address field -->
             <ion-label position="floating" class ="form-label">        
               <ion-icon name="mail" color = "medium"></ion-icon> 
               Email Address:
@@ -23,6 +24,7 @@
             >
             </ion-input>
           </ion-item>
+          <!-- invalid email input message -->
           <ion-item
             lines="none" 
             class="error-message"
@@ -32,7 +34,7 @@
             <ion-icon name="alert" padding></ion-icon>
             <ion-label text-wrap>Invalid email address</ion-label>
           </ion-item>
-        
+          <!-- login password field -->
           <ion-item>
             <ion-label position="floating" class ="form-label">
                 <ion-icon name="key" color="medium"></ion-icon>
@@ -45,6 +47,7 @@
             > 
             </ion-input>
           </ion-item>
+          <!-- invalid password input message-->
           <ion-item
             lines="none" 
             class="error-message"
@@ -54,16 +57,16 @@
             <ion-icon name="alert" padding></ion-icon>
             <ion-label text-wrap>No password entered</ion-label>
           </ion-item>
-        
+          <!-- login button -->
           <ion-button (click)="loginUser(loginForm)" [disabled]="!loginForm.valid" float-right>
             LogIn
           </ion-button>
         </form>
-      
+        <!-- sign up button -->
         <ion-button fill="clear" routerLink="/signup" size="small">
           Sign up
         </ion-button>
-        
+        <!-- password reset page button -->
         <ion-button fill="clear" routerLink="/reset-password" size="small">
           Forgot Password?
         </ion-button>
