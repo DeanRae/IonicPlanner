@@ -9,10 +9,12 @@ import { Router } from '@angular/router';
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
 })
-export class LoginPage implements OnInit {
 
+// code based on tut: https://javebratt.com/ionic-firebase-tutorial-auth/
+export class LoginPage implements OnInit {
   public loginForm: FormGroup;
   public loading: HTMLIonLoadingElement;
+  
   constructor(public loadingCtrl: LoadingController,
     public alertCtrl: AlertController,
     private authService: AuthService,

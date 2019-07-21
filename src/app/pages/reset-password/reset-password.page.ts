@@ -9,8 +9,11 @@ import { Router } from '@angular/router';
   templateUrl: './reset-password.page.html',
   styleUrls: ['./reset-password.page.scss'],
 })
+
+// code based on tut: https://javebratt.com/ionic-firebase-tutorial-auth/
 export class ResetPasswordPage implements OnInit {
   public resetPasswordForm: FormGroup;
+  
   constructor(
     private authService: AuthService,
     private alertCtrl: AlertController,
