@@ -1,12 +1,3 @@
-
-.centred-body {
-    max-width: 600px;
-    max-height: 800px;
-    height:auto;
-    width: auto;
-    margin:auto;
-}
-
 // causes ion-label and icon to be aligned. Fix found here: https://codepen.io/brandyscarney/pen/WWXrLg?editors=1100
 ion-label {
     display: flex !important;
@@ -16,6 +7,22 @@ ion-label {
 ion-label ion-icon {
     height: 100%;
     margin-right: 5px;
+}
+
+ion-col {
+    max-width: 600px;
+}
+
+// adds red line in case the default red line on error doesn't show up
+.invalid {
+    border-bottom: 1px solid #ff6153;
+}
+  
+.error-message {
+    ion-label {
+        //margin: 2px 0;
+        font-size: 90%;
+    }
 }
 
 // .error-message {
