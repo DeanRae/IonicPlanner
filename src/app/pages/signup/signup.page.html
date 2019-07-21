@@ -1,9 +1,74 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>signup</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
-
-</ion-content>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+          <ion-back-button 
+            text="Login"
+            defaultHref="/login"></ion-back-button>
+      </ion-buttons>
+      <ion-title>Sign Up</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  
+  <!--form code based on tut: https://javebratt.com/ionic-firebase-tutorial-auth/-->
+  <ion-content padding>
+    <ion-grid>
+      <ion-row class="ion-justify-content-center">
+        <ion-col >
+          <form [formGroup]="signupForm">
+            <!-- sign up email field-->
+            <ion-item>
+              <ion-label position="floating" class ="form-label">        
+                <ion-icon name="mail" color = "medium"></ion-icon> 
+                Email Address <ion-text color="danger">*</ion-text>:
+              </ion-label>
+              <ion-input
+                formControlName="email"
+                type="email"
+                [class.invalid]="!signupForm.controls['email'].valid &&
+                signupForm.controls['email'].touched"
+              >
+              </ion-input>
+            </ion-item>
+            <!-- invalid email input message-->
+            <ion-item
+              lines="none" 
+              class="error-message"
+              *ngIf="!signupForm.controls['email'].valid &&
+              signupForm.controls['email'].touched"
+            >
+              <ion-icon name="alert" padding></ion-icon>
+              <ion-label text-wrap>Invalid email address</ion-label>
+            </ion-item>
+            <!-- sign up password field-->
+            <ion-item>
+              <ion-label position="floating" class ="form-label">
+                  <ion-icon name="key" color="medium"></ion-icon>
+                  Password <ion-text color="danger">*</ion-text>:
+              </ion-label>
+              <ion-input
+                formControlName="password"
+                type="password"
+                [class.invalid]="!signupForm.controls['password'].valid&& signupForm.controls['password'].touched"
+              > 
+              </ion-input>
+            </ion-item>
+            <!-- invalid password input message-->
+            <ion-item
+              lines="none" 
+              class="error-message"
+              *ngIf="!signupForm.controls['password'].valid
+                && signupForm.controls['password'].touched"
+            >
+              <ion-icon name="alert" padding></ion-icon>
+              <ion-label text-wrap>Password must be a min of 6 characters</ion-label>
+            </ion-item>
+            <!-- sign up user button-->
+            <ion-button (click)="signupUser(signupForm)" [disabled]="!signupForm.valid" float-right>
+              Sign up
+            </ion-button>
+          </form>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-content>
+  
