@@ -9,33 +9,44 @@
       </ion-col>
   
     </ion-row>
-    <!-- start and end date selection-->
+    <!-- start and end date labels -->
+    <ion-row>
+      <ion-col>
+        <ion-label position="stacked">
+          Start Date
+        </ion-label>
+      </ion-col>
+      <ion-col>
+        <ion-label position="stacked">
+          End Date
+        </ion-label>
+      </ion-col>
+    <!-- start and end date selection -->  
+    </ion-row>
     <ion-row>
       <ion-col>
         <ion-item>
-          <ion-label position="stacked">
-            Start Date
-          </ion-label>
           <ion-input>
           </ion-input>
-          <ion-icon name="calendar" slot="end"></ion-icon>
+          <ion-button slot="end">
+              <ion-icon name="calendar" slot="icon-only"></ion-icon>
+          </ion-button>
         </ion-item>
       </ion-col>
       <ion-col>
-        <ion-item>
-          <ion-label position="stacked">
-            Due Date
-          </ion-label>
+        <ion-item>  
           <ion-input>
           </ion-input>
-          <ion-icon name="calendar" slot="end"></ion-icon>
+          <ion-button slot="end">
+              <ion-icon name="calendar" slot="icon-only"></ion-icon>
+          </ion-button>
         </ion-item>
       </ion-col>
     </ion-row>
     <!-- location selection-->
     <ion-row>
         <ion-col>
-    
+
         </ion-col>
     </ion-row>
     <!-- list item (event or task) title-->
@@ -44,11 +55,16 @@
     
         </ion-col>
     </ion-row>
+    <!-- description text area label -->
+    <ion-row>
+      <ion-col>
+          <ion-label position="stacked" size="auto">Description</ion-label>
+      </ion-col>  
+    </ion-row>
     <!-- item user inputted description -->
     <ion-row>
         <ion-col>
             <ion-item>
-                <ion-label position="stacked" size = "auto">Description</ion-label>
                 <ion-textarea></ion-textarea>
             </ion-item>
         </ion-col>
