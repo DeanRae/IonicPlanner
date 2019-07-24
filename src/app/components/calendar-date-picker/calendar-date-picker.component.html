@@ -1,3 +1,6 @@
-<p>
-  calendar-date-picker works!
-</p>
+<ion-item>
+  <ion-input type="date" [(ngModel)]="selectedDate"></ion-input>
+  <ion-button slot="end" (click)="openDatePicker()">
+      <ion-icon name="calendar" slot="icon-only"></ion-icon>
+  </ion-button>
+</ion-item> 
