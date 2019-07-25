@@ -1,6 +1,13 @@
-<ion-item>
+<!-- Button Implementation: <ion-item>
   <ion-input type="date" [(ngModel)]="selectedDate"></ion-input>
   <ion-button slot="end" (click)="openDatePicker()">
       <ion-icon name="calendar" slot="icon-only"></ion-icon>
   </ion-button>
-</ion-item> 
+</ion-item>  -->
+<ion-item>
+  <ion-input readonly [(ngModel)]="selectedDate" 
+    (click)="openDatePicker()" placeholder="Select a date" >
+  </ion-input>
+ <ion-icon name="calendar" slot="end" (click)="openDatePicker()"></ion-icon>
+</ion-item>
+
