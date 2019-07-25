@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Ionic4DatepickerModalComponent } from '@logisticinfotech/ionic4-datepicker';
 import * as moment from 'moment';
@@ -26,10 +26,12 @@ export class CalendarDatePickerComponent implements OnInit {
     momentLocale: 'en-NZ'
   }
 
-  // isStartDate: boolean;
-  // public whichDate: boolean,
+  isStartDate: boolean;
+  startDate: any;
+  @Input() whichDate: boolean;
+  @Input() whatDate: any;
 
-  constructor( public modalCtrl: ModalController) { }
+  constructor(public modalCtrl: ModalController) { }
 
   async openDatePicker() {
     const datePickerModal = await this.modalCtrl.create({
@@ -53,7 +55,14 @@ export class CalendarDatePickerComponent implements OnInit {
   }
 
   ngOnInit() {
-    //this.isStartDate = this.whichDate;
+    
+  }
+
+  ngAfterContentInit() {
+    this.isStartDate = this.whichDate;
+    this.startDate = this.whatDate;
+    console.log(this.isStartDate ? 'Start Date' : 'End Date');
+    console.log(isNullOrUndefined(this.startDate) ? "No start date was set yet or passed" : this.startDate);
   }
 
 }
