@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Ionic4DatepickerModalComponent } from '@logisticinfotech/ionic4-datepicker';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-calendar-date-picker',
@@ -14,9 +15,13 @@ export class CalendarDatePickerComponent implements OnInit {
     closeOnSelect: true,
     mondayFirst: true,
     titleLabel: 'Select a Date',
+    monthsList: [ 
+      'January', 'February', 'March', 'April', 'May','June', 'July', 'August', 'September', 'October', 'November', 'December'
+    ],
     weeksList: [
       'Sun','Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'
     ],
+    dateFormat: 'D MMMM YYYY',
     momentLocale: 'en-NZ'
   }
 
@@ -33,11 +38,15 @@ export class CalendarDatePickerComponent implements OnInit {
   datePickerModal.onDidDismiss()
     .then((data) => {
       // this.isModalOpen = false;
-      if (data == 'Invalid date') {
-        console.log('hello');
+      if (data.data.date == 'Invalid date') {
+        this.selectedDate = moment(new Date()).format('D MMMM YYYY');
+        console.log(this.selectedDate);
+      } else {
+        this.selectedDate = data.data.date;
+        console.log(this.selectedDate);
       }
-      console.log(data);
-      this.selectedDate = data.data.date;
+      
+      
     });
 }
 
