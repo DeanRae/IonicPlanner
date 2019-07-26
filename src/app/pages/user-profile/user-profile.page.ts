@@ -32,4 +32,10 @@ export class UserProfilePage implements OnInit {
     });
   }
 
+  logOut(): void {
+    this.authService.logoutUser().then( () => {
+      this.router.navigateByUrl('login');
+    });
+  }
+
 }
