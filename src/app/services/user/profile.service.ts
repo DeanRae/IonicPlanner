@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import { ObjectUnsubscribedError } from 'rxjs';
 
 /**
  * Keeps track of the user's details. Code is based from the tutorial
@@ -15,15 +16,20 @@ export class ProfileService {
   public currentUser: firebase.User;
 
   constructor() {
-    firebase.auth().onAuthStateChanged(user => {
+    var unsubscribe = firebase.auth().onAuthStateChanged(user => {
       if (user) {
         this.currentUser = user;
         this.userProfile = firebase.firestore().doc(`/userProfile/${user.uid}`);
       }
     });
+
+    this.currentUser = firebase.auth().currentUser;
+    this.userProfile = firebase.firestore().doc(`/userProfile/${this.currentUser.uid}`);
+    unsubscribe();
   }
 
   getUserProfile(): firebase.firestore.DocumentReference {
+    console.log(this.currentUser.email);
     return this.userProfile;
   }
 
