@@ -1,22 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ListChildrenDetailsComponent } from './list-children-details.component';
+import { TodoItemDetailsComponent } from './todo-item-details.component';
 
 describe('ListChildrenDetailsComponent', () => {
-  let component: ListChildrenDetailsComponent;
-  let fixture: ComponentFixture<ListChildrenDetailsComponent>;
+  let component: TodoItemDetailsComponent;
+  let fixture: ComponentFixture<TodoItemDetailsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ListChildrenDetailsComponent ],
+      declarations: [ TodoItemDetailsComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ListChildrenDetailsComponent);
+    fixture = TestBed.createComponent(TodoItemDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
