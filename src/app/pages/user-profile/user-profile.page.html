@@ -1,9 +1,66 @@
+<!-- template based on tut: https://javebratt.com/ionic-firebase-tutorial-object/ -->
 <ion-header>
   <ion-toolbar>
-    <ion-title>userProfile</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Profile Settings</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logOut()">
+        <ion-icon slot="icon-only" name="log-out"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content padding>
+  <ion-list>
+    <ion-item (click)="updateName()">
+      <ion-label>
+        <ion-grid>
+          <ion-row>
+            <ion-col class="text-left" size="5"> Name </ion-col>
+            <ion-col class="text-center" size="7" *ngIf="userProfile?.firstName || userProfile?.lastName">
+              {{userProfile?.firstName}} {{userProfile?.lastName}}
+              <ion-icon name="create" color="medium"></ion-icon>
+            </ion-col>
+            <ion-col size="7" class="placeholder-profile text-center" *ngIf="!userProfile?.firstName">
+              <span> Click here to edit. </span>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-label>
+    </ion-item>
 
+    <ion-item (click)="updateEmail()">
+      <ion-label>
+        <ion-grid>
+          <ion-row>
+            <ion-col class="text-left" size="5"> Email </ion-col>
+            <ion-col class="text-center" size="7" *ngIf="userProfile?.email">
+              {{userProfile?.email}}
+              <ion-icon name="create" color="medium"></ion-icon>
+            </ion-col>
+            <ion-col size="7" class="placeholder-profile text-center" *ngIf="!userProfile?.email">
+              <span> Click here to edit. </span>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-label>
+    </ion-item>
+
+    <ion-item (click)="updatePassword()">
+      <ion-label>
+        <ion-grid>
+          <ion-row>
+            <ion-col class="text-left" size="5"> Password </ion-col>
+            <ion-col class="text-center" size="7" class="placeholder-profile">
+              <span> Click here to edit </span>
+              <ion-icon name="create" color="medium"></ion-icon>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-label>
+    </ion-item>
+  </ion-list>
 </ion-content>

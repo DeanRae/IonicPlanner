@@ -38,4 +38,84 @@ export class UserProfilePage implements OnInit {
     });
   }
 
+  async updateName(): Promise<void> {
+    const alert = await this.alertCtrl.create({
+      subHeader: 'Your first name & last name',
+      inputs: [
+        {
+          type: 'text',
+          name: 'firstName',
+          placeholder: 'Enter first name',
+          value: this.userProfile.firstName,
+        },
+        {
+          type: 'text',
+          name: 'lastName',
+          placeholder: 'Enter last name',
+          value: this.userProfile.lastName,
+        },
+      ],
+      buttons: [
+        { text: 'Cancel' },
+        {
+          text: 'Save',
+          handler: data => {
+            this.profileService.updateName(data.firstName, data.lastName);
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  async updateEmail(): Promise<void> {
+    const alert = await this.alertCtrl.create({
+      inputs: [
+        { type: 'text', name: 'newEmail', placeholder: 'Your new email' },
+        { name: 'password', placeholder: 'Your password', type: 'password' },
+      ],
+      buttons: [
+        { text: 'Cancel' },
+        {
+          text: 'Save',
+          handler: data => {
+            this.profileService
+              .updateEmail(data.newEmail, data.password)
+              .then(() => {
+                console.log('Email Changed Successfully');
+              })
+              .catch(error => {
+                console.log('ERROR: ' + error.message);
+              });
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+  
+  async updatePassword(): Promise<void> {
+    const alert = await this.alertCtrl.create({
+      inputs: [
+        { name: 'newPassword', placeholder: 'New password', type: 'password' },
+        { name: 'oldPassword', placeholder: 'Old password', type: 'password' },
+      ],
+      buttons: [
+        { text: 'Cancel' },
+        {
+          text: 'Save',
+          handler: data => {
+            this.profileService.updatePassword(
+              data.newPassword,
+              data.oldPassword
+            );
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+  
+
 }
+
