@@ -8,67 +8,53 @@
 <ion-content padding>
   <ion-grid>
     <ion-row class="ion-justify-content-center">
-      <ion-col >
+      <ion-col>
         <form [formGroup]="loginForm">
           <ion-item>
             <!-- login email address field -->
-            <ion-label position="floating" class ="form-label">        
-              <ion-icon name="mail" color = "medium"></ion-icon> 
+            <ion-label position="floating" class="form-label">
+              <ion-icon name="mail" color="medium"></ion-icon>
               Email Address:
             </ion-label>
-            <ion-input
-              formControlName="email"
-              type="email"
-              [class.invalid]="!loginForm.controls['email'].valid &&
-              loginForm.controls['email'].touched"
-            >
+            <ion-input formControlName="email" type="email" [class.invalid]="!loginForm.controls['email'].valid &&
+              loginForm.controls['email'].touched">
             </ion-input>
           </ion-item>
           <!-- invalid email input message -->
-          <ion-item
-            lines="none" 
-            class="error-message"
-            *ngIf="!loginForm.controls['email'].valid &&
-                loginForm.controls['email'].touched"
-          >
+          <ion-item lines="none" class="error-message" *ngIf="!loginForm.controls['email'].valid &&
+                loginForm.controls['email'].touched">
             <ion-icon name="alert" padding></ion-icon>
             <ion-label text-wrap>Invalid email address</ion-label>
           </ion-item>
           <!-- login password field -->
           <ion-item>
-            <ion-label position="floating" class ="form-label">
-                <ion-icon name="key" color="medium"></ion-icon>
-                Password:
+            <ion-label position="floating" class="form-label">
+              <ion-icon name="key" color="medium"></ion-icon>
+              Password:
             </ion-label>
-            <ion-input
-              formControlName="password"
-              type="password"
-              [class.invalid]="!loginForm.controls['password'].valid&& loginForm.controls['password'].touched"
-            > 
+            <ion-input formControlName="password" type="password"
+              [class.invalid]="!loginForm.controls['password'].valid&& loginForm.controls['password'].touched">
             </ion-input>
           </ion-item>
           <!-- invalid password input message-->
-          <ion-item
-            lines="none" 
-            class="error-message"
-            *ngIf="!loginForm.controls['password'].valid
-              && loginForm.controls['password'].touched"
-          >
+          <ion-item lines="none" class="error-message" *ngIf="!loginForm.controls['password'].valid
+              && loginForm.controls['password'].touched">
             <ion-icon name="alert" padding></ion-icon>
             <ion-label text-wrap>No password entered</ion-label>
           </ion-item>
           <!-- login button -->
-          <ion-button (click)="loginUser(loginForm)" [disabled]="!loginForm.valid" float-right>
-            LogIn
+          <ion-button (click)="loginUser(loginForm)" [disabled]="!loginForm.valid" expand="full">
+            Login
           </ion-button>
         </form>
-        <!-- sign up button -->
-        <ion-button fill="clear" routerLink="/signup" size="small">
-          Sign up
-        </ion-button>
         <!-- password reset page button -->
-        <ion-button fill="clear" routerLink="/reset-password" size="small">
+        <ion-button fill="clear" routerLink="/reset-password" expand="block">
           Forgot Password?
+        </ion-button>
+        <ion-label justify-content-center color="medium">or</ion-label>
+        <!-- sign up button -->
+        <ion-button fill="clear" routerLink="/signup" expand="block">
+          Sign up
         </ion-button>
       </ion-col>
     </ion-row>
