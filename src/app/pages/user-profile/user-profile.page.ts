@@ -40,7 +40,7 @@ export class UserProfilePage implements OnInit {
 
   async updateName(): Promise<void> {
     const alert = await this.alertCtrl.create({
-      subHeader: 'Your first name & last name',
+      subHeader: 'Update first and last name',
       inputs: [
         {
           type: 'text',
@@ -70,6 +70,7 @@ export class UserProfilePage implements OnInit {
 
   async updateEmail(): Promise<void> {
     const alert = await this.alertCtrl.create({
+      subHeader: 'Update Email',
       inputs: [
         { type: 'text', name: 'newEmail', placeholder: 'Your new email' },
         { name: 'password', placeholder: 'Your password', type: 'password' },
@@ -96,6 +97,7 @@ export class UserProfilePage implements OnInit {
   
   async updatePassword(): Promise<void> {
     const alert = await this.alertCtrl.create({
+      subHeader: 'Update Password',
       inputs: [
         { name: 'newPassword', placeholder: 'New password', type: 'password' },
         { name: 'oldPassword', placeholder: 'Old password', type: 'password' },
