@@ -6,7 +6,7 @@ import 'firebase/firestore';
 @Injectable({
   providedIn: 'root'
 })
-export class ListService {
+export class ListManagementService {
   public userListsRef: firebase.firestore.CollectionReference;
 
   constructor() {
