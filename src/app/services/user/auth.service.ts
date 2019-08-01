@@ -25,6 +25,13 @@ export class AuthService {
           .firestore()
           .doc(`/userProfile/${newUserCredential.user.uid}`)
           .set({ email });
+        // create user lists document
+        firebase
+          .firestore()
+          .collection(`/userProfile/${newUserCredential.user.uid}/user_lists`)
+          .add({
+            title: "All Tasks and Events"
+          })
       })
       .catch(error => {
         console.error(error);
