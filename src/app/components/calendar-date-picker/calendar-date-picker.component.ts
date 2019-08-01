@@ -1,16 +1,26 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, forwardRef} from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Ionic4DatepickerModalComponent } from '@logisticinfotech/ionic4-datepicker';
 import * as moment from 'moment';
 import { isNullOrUndefined } from 'util';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-calendar-date-picker',
   templateUrl: './calendar-date-picker.component.html',
   styleUrls: ['./calendar-date-picker.component.scss'],
+  providers: [{
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: forwardRef(() => CalendarDatePickerComponent),
+    multi: true
+  }]
 })
-export class CalendarDatePickerComponent implements OnInit {
-  selectedDate: any;
+export class CalendarDatePickerComponent implements ControlValueAccessor {
+  public selectedDate: string;
+
+  private onChange: Function = (newDate: string) => {};
+  private onTouch: Function = () => {};
+  private disabled: boolean = false;
 
   datePickerObj: any = {
     closeOnSelect: true,
@@ -23,13 +33,8 @@ export class CalendarDatePickerComponent implements OnInit {
       'Sun','Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'
     ],
     dateFormat: 'D MMMM YYYY',
-    momentLocale: 'en-NZ'
+    momentLocale: 'en-NZ'  
   }
-
-  isStartDate: boolean;
-  startDate: any;
-  @Input() whichDate: boolean;
-  @Input() whatDate: any;
 
   constructor(public modalCtrl: ModalController) { }
 
@@ -39,30 +44,44 @@ export class CalendarDatePickerComponent implements OnInit {
       cssClass: 'li-ionic4-datePicker',
       componentProps: { 'objConfig': this.datePickerObj }
   });
+
   await datePickerModal.present();
   datePickerModal.onDidDismiss()
     .then((data) => {
       if (isNullOrUndefined(data.data) || data.data.date === 'Invalid date') {
         if (isNullOrUndefined(this.selectedDate)) {
-          this.selectedDate = moment(new Date()).format('D MMMM YYYY');
+          this.writeValue(moment(new Date()).format('D MMMM YYYY'));
+          this.onTouch();
           console.log(this.selectedDate);
         }
       } else {
-        this.selectedDate = data.data.date;
+        this.writeValue(data.data.date);
+        this.onTouch();
         console.log(this.selectedDate);
-      }    
+       }    
     });
   }
 
-  ngOnInit() {
-    
+  // Allow Angular to set the value on the component
+  writeValue(value: string): void {
+    this.onChange(value);
+    this.selectedDate = value;
   }
 
-  ngAfterContentInit() {
-    this.isStartDate = this.whichDate;
-    this.startDate = this.whatDate;
-    console.log(this.isStartDate ? 'Start Date' : 'End Date');
-    console.log(isNullOrUndefined(this.startDate) ? "No start date was set yet or passed" : this.startDate);
+  // Save a reference to the change function passed to us by 
+  // the Angular form control
+  registerOnChange(fn: Function): void {
+    this.onChange = fn;
   }
 
+  // Save a reference to the touched function passed to us by 
+  // the Angular form control
+  registerOnTouched(fn: Function): void {
+    this.onTouch = fn;    
+  }
+
+  // Allow the Angular form control to disable this input
+  setDisabledState(disabled: boolean): void {
+    this.disabled = disabled;
+  }
 }
