@@ -1,81 +1,97 @@
+<!-- list item (event or task) title-->
+<ion-row>
+  <ion-col size="12" size-sm>
+    <ion-label position="stacked">Name</ion-label>
+    <ion-item>
+      <ion-input></ion-input>
+    </ion-item>
+  </ion-col>
+  <ion-col></ion-col>
+</ion-row>
+<!-- location selection-->
+<ion-row>
+  <ion-col size="12" size-sm>
+    <ion-label position="stacked">Location</ion-label>
+    <ion-item>
+      <ion-input></ion-input>
+    </ion-item>
+  </ion-col>
+  <ion-col></ion-col>
+</ion-row>
+<!-- list and tags selection -->
+<ion-row>
+  <ion-col size="12" size-sm>
+    <ion-label position="stacked">
+      List/s
+    </ion-label>
+    <ion-list>
+      <ion-item>
+        <ion-label>Select one or more lists</ion-label>
+        <ion-select multiple="true" cancelText="Cancel" okText="Save">
+          <ion-select-option *ngFor="let list of listTitleList" value={{list?.id}}>
+            {{list?.title}}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+  </ion-col>
+  <ion-col>
+  </ion-col>
+</ion-row>
+<!-- start and end date selection -->
+<ion-row>
+  <ion-col size="12" size-sm>
+    <ion-label position="stacked">
+      Start Date
+    </ion-label>
+    <app-calendar-date-picker [(ngModel)]="startDate"></app-calendar-date-picker>
+  </ion-col>
+  <ion-col size="12" size-sm>
+    <ion-label position="stacked">
+      Start Time
+    </ion-label>
+    <app-time-picker></app-time-picker>
+  </ion-col>
+</ion-row>
+<!-- start and end date selection -->
+<ion-row>
+  <ion-col size="12" size-sm>
+    <ion-label position="stacked">
+      End Date
+    </ion-label>
+    <app-calendar-date-picker [(ngModel)]="endDate"></app-calendar-date-picker>
+  </ion-col>
+  <ion-col size="12" size-sm>
+    <ion-label position="stacked">
+      End Time
+    </ion-label>
+    <app-time-picker></app-time-picker>
+  </ion-col>
+</ion-row>
+<!-- item user inputted description -->
+<ion-row>
+  <ion-col>
+    <ion-label position="stacked" size="auto">Description</ion-label>
+    <ion-item>
+      <ion-textarea></ion-textarea>
+    </ion-item>
+  </ion-col>
+</ion-row>
+<!-- item sub-tasks-->
+<ion-row>
+  <ion-col>
+    <ion-item class="subTask">
+        <ion-label size="auto">Sub-Tasks</ion-label>
+        <ion-button (click)="addSubTask()" fill="clear">New Sub-Task<ion-icon name="add" slot="end" ></ion-icon></ion-button>
+    </ion-item>
+    
 
-  <!-- list item (event or task) title-->
-  <ion-row>
-    <ion-col size="12" size-sm>
-      <ion-label position="stacked">Name</ion-label>
-      <ion-item>
-        <ion-input></ion-input>
-      </ion-item>
-    </ion-col>
-    <ion-col></ion-col>
-  </ion-row>
-  <!-- location selection-->
-  <ion-row>
-    <ion-col size="12" size-sm>
-      <ion-label position="stacked">Location</ion-label>
-      <ion-item>
-        <ion-input></ion-input>
-      </ion-item>
-    </ion-col>
-    <ion-col></ion-col>
-  </ion-row>
-  <!-- list and tags selection -->
-  <ion-row>
-    <ion-col size="12" size-sm>
-      <ion-label position="stacked">
-        List/s
-      </ion-label>
-      <ion-list>
-        <ion-item>
-          <ion-label>Select one or more lists</ion-label>
-          <ion-select multiple="true" cancelText="Cancel" okText="Save">
-            <ion-select-option *ngFor="let list of listTitleList" value={{list?.id}}>
-              {{list?.title}}
-            </ion-select-option>
-          </ion-select>
+    <ion-list class="subTask">
+        <ion-item *ngFor="let task of subTasks; let i = index" lines="none">
+          <ion-label>{{task?.subTask}}</ion-label>
+          <ion-checkbox slot="start" [(ngModel)]="task.isChecked"></ion-checkbox>
+          <ion-icon class="deleteCheckboxButt" name="trash" slot="end" (click)="deleteSubTask(i)"></ion-icon>
         </ion-item>
       </ion-list>
-    </ion-col>
-    <ion-col>
-    </ion-col>
-  </ion-row>
-  <!-- start and end date selection -->
-  <ion-row>
-    <ion-col size="12" size-sm>
-      <ion-label position="stacked">
-        Start Date
-      </ion-label>
-      <app-calendar-date-picker [(ngModel)]="startDate"></app-calendar-date-picker>
-    </ion-col>
-    <ion-col size="12" size-sm>
-      <ion-label position="stacked">
-        Start Time
-      </ion-label>
-      <app-calendar-date-picker></app-calendar-date-picker>
-    </ion-col>
-  </ion-row>
-  <!-- start and end date selection -->
-  <ion-row>
-    <ion-col size="12" size-sm>
-      <ion-label position="stacked">
-        End Date
-      </ion-label>
-      <app-calendar-date-picker [(ngModel)]="endDate"></app-calendar-date-picker>
-    </ion-col>
-    <ion-col size="12" size-sm>
-      <ion-label position="stacked">
-        End Time
-      </ion-label>
-      <ion-icon name="time"></ion-icon>
-      <app-calendar-date-picker></app-calendar-date-picker>
-    </ion-col>
-  </ion-row>
-  <!-- item user inputted description -->
-  <ion-row>
-    <ion-col>
-      <ion-label position="stacked" size="auto">Description</ion-label>
-      <ion-item>
-        <ion-textarea></ion-textarea>
-      </ion-item>
-    </ion-col>
-  </ion-row>
+  </ion-col>
+</ion-row>

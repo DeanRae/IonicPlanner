@@ -1,0 +1,11 @@
+ion-item {
+    --background: #efefef;
+}
+
+.subTask, .subTask ion-item {
+    --background: white;
+}
+
+.deleteCheckboxButt {
+    z-index: 3;
+}
