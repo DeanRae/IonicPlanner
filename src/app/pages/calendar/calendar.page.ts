@@ -6,6 +6,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./calendar.page.scss'],
 })
 export class CalendarPage implements OnInit {
+  eventSource = [];
+  calendar = {
+    mode: 'month',
+    currentDate: new Date(),
+  }
 
   constructor() { }
 
