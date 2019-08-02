@@ -29,7 +29,8 @@ export class AuthService {
         firebase
           .firestore()
           .collection(`/userProfile/${newUserCredential.user.uid}/user_lists`)
-          .add({
+          .doc("all_tasks")
+          .set({
             title: "All Tasks"
           })
       })
