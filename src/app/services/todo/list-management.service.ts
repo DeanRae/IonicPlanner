@@ -2,12 +2,15 @@ import { Injectable } from '@angular/core';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import { isNullOrUndefined } from 'util';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ListManagementService {
   public userListsRef: firebase.firestore.CollectionReference;
+  currentUser: firebase.User;
+  userProfile: firebase.firestore.DocumentReference;
 
   constructor() {
     firebase.auth().onAuthStateChanged(user => {
@@ -17,6 +20,16 @@ export class ListManagementService {
           .collection(`/userProfile/${user.uid}/user_lists`);
       }
     });
+
+    // just in case code above does not save the reference
+    if (isNullOrUndefined(this.userListsRef)) {
+      this.currentUser = firebase.auth().currentUser;
+      this.userProfile = firebase.firestore().doc(`/userProfile/${this.currentUser.uid}`);
+  
+      this.userListsRef = firebase
+      .firestore()
+      .collection(`/userProfile/${this.currentUser.uid}/user_lists`);
+    }
   }
 
   createList(listTitle:string): Promise<firebase.firestore.DocumentReference> {
@@ -34,5 +47,9 @@ export class ListManagementService {
 
   deleteList() {
     
+  }
+
+  getUserLists(): firebase.firestore.CollectionReference {
+    return this.userListsRef;
   }
 }

@@ -22,14 +22,14 @@ export class TaskManagementService {
     listId: string,
     taskName: string,
     taskStartDate: string,
-    taskEndDate: number,
-    taskStartTime: number,
-    taskEndTime: number,
+    taskEndDate: string,
+    taskStartTime: string,
+    taskEndTime: string,
     taskLocation: string,
     taskDescription: string): Promise<firebase.firestore.DocumentReference> {
     return this.userListsRef
       .doc(listId)
-      .collection('task_list')
+      .collection('tasks')
       .add({
         name: taskName,
         location: taskLocation,
@@ -46,14 +46,14 @@ export class TaskManagementService {
     listId: string,
     taskName: string,
     taskStartDate: string,
-    taskEndDate: number,
-    taskStartTime: number,
-    taskEndTime: number,
+    taskEndDate: string,
+    taskStartTime: string,
+    taskEndTime: string,
     taskLocation: string,
     taskDescription: string) {
     this.userListsRef
       .doc(listId)
-      .collection('task_list')
+      .collection('tasks')
       .doc(taskId)
       .update({
         name: taskName,
@@ -72,7 +72,7 @@ export class TaskManagementService {
   deleteTask(taskId: string, listId: string) {
     this.userListsRef
       .doc(listId)
-      .collection('task_list')
+      .collection('tasks')
       .doc(taskId)
       .delete()
       .catch(function (error) {

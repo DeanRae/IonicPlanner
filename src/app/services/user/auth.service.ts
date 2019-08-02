@@ -30,7 +30,7 @@ export class AuthService {
           .firestore()
           .collection(`/userProfile/${newUserCredential.user.uid}/user_lists`)
           .add({
-            title: "All Tasks and Events"
+            title: "All Tasks"
           })
       })
       .catch(error => {
