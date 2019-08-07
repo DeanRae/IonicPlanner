@@ -1,0 +1,15 @@
+<form [formGroup]="dateTimeForm">
+  <!-- date manual input field and date picker buttons -->
+  <ion-item>
+    <ion-input formControlName="selectedDate" [class.invalid]="!dateTimeForm.controls['selectedDate'].valid &&
+    (dateTimeForm.controls['selectedDate'].touched || dateTimeForm.controls['selectedDate'].dirty)">
+    </ion-input>
+    <ion-icon name="calendar" slot="end" (click)="openDatePicker()"></ion-icon>
+  </ion-item>
+  <!-- invalid email input message -->
+  <ion-item lines="none" class="error-message" *ngIf="!dateTimeForm.controls['selectedDate'].valid && 
+  (dateTimeForm.controls['selectedDate'].touched || dateTimeForm.controls['selectedDate'].dirty)">
+    <ion-icon name="alert" padding></ion-icon>
+    <ion-label text-wrap>Invalid date. Expected format 12 August 2019</ion-label>
+  </ion-item>
+</form>
