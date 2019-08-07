@@ -16,7 +16,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormGroup, Validators, FormBui
   }]
 })
 export class DateTimePickerComponent implements ControlValueAccessor {
-  @Input() isStartDate:boolean; 
+  @Input() isStartDate: boolean;
   @Input() inputtedStartDate: string;
   public dateTimeForm: FormGroup;
 
@@ -49,21 +49,44 @@ export class DateTimePickerComponent implements ControlValueAccessor {
   }
 
   /**
+   * Used to concatenate the date and time string received
+   * through the user using the calendar date and time pickers instead 
+   * of typing the date and time manually.
+   * 
+   * Concatenates a given date or time to produce D MMMM YYYY h:mm a
+   * 
+   * @param isTime if the new input is a time input
+   * @param newDateTime the new input from the pickers (may be date or time)
+   */
+  dateTimeConcatenator(isTime:boolean, newDateTime:string):string {
+    let currentDateTime = moment(this.selectedDate.value);
+    let concatenatedString: string;
+    if (isTime) {
+      let date = currentDateTime.format("D MMMM YYYY");
+      concatenatedString = date + " " + newDateTime;
+    } else {
+      let time = currentDateTime.format("h:mm a");
+      concatenatedString = newDateTime + " " + time;
+    }
+    return concatenatedString;
+  }
+
+  /**
    * date validator used to validate form. Code from 
    * https://stackoverflow.com/questions/51905033/pre-populating-and-validating-date-in-angular-6-reactive-form
    * @param format 
    */
   dateValidator(format): any {
     return (control: FormControl): { [key: string]: any } => {
-      if (isNullOrUndefined(control.value) || control.value == ''){
+      if (isNullOrUndefined(control.value) || control.value == '') {
         return null;
       }
       const val = moment(control.value, format, true);
-  
+
       if (!val.isValid()) {
         return { invalidDate: true };
       }
-  
+
       return null;
     };
   }
@@ -71,7 +94,7 @@ export class DateTimePickerComponent implements ControlValueAccessor {
   /**
    * Returns the selectedDate form control
    */
-  get selectedDate() { return this.dateTimeForm.get('selectedDate');}
+  get selectedDate() { return this.dateTimeForm.get('selectedDate'); }
 
   /**
    * Opens and handles the calendar date picker component modal made by logisticinfotech
@@ -86,16 +109,10 @@ export class DateTimePickerComponent implements ControlValueAccessor {
     await datePickerModal.present();
     datePickerModal.onDidDismiss()
       .then((data) => {
-        if (isNullOrUndefined(data.data) || data.data.date === 'Invalid date') {
-          if (isNullOrUndefined(this.selectedDate)) {
-            this.writeValue('');
-            this.onTouch();
-            console.log(this.selectedDate);
-          }
-        } else {
-          this.writeValue(data.data.date);
+        if (!(isNullOrUndefined(data.data) || data.data.date === 'Invalid date')) {
+          let newDate = this.dateTimeConcatenator(false, data.data.date);
+          this.writeValue(newDate);
           this.onTouch();
-          console.log(this.selectedDate);
         }
       });
   }
