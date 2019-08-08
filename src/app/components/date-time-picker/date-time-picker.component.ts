@@ -1,9 +1,9 @@
-import { Component, forwardRef, OnInit, Input } from '@angular/core';
+import { Component, forwardRef, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Ionic4DatepickerModalComponent } from '@logisticinfotech/ionic4-datepicker';
 import { IonicTimepickerModalComponent } from '@logisticinfotech/ionic-timepicker';
 import * as moment from 'moment';
-import { isNullOrUndefined, isNull } from 'util';
+import { isNullOrUndefined } from 'util';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormGroup, Validators, FormBuilder, FormControl } from '@angular/forms';
 
 @Component({
@@ -54,8 +54,9 @@ export class DateTimePickerComponent implements ControlValueAccessor {
   constructor(public modalCtrl: ModalController, private formBuilder: FormBuilder) {
     // create form validation for user inputted date
     this.dateTimeForm = this.formBuilder.group({
-      selectedDate: ['', this.dateValidator("D MMMM YYYY h:mm a")]
+      selectedDate: new FormControl('')
     });
+
   }
 
   /**
@@ -71,34 +72,21 @@ export class DateTimePickerComponent implements ControlValueAccessor {
   dateTimeConcatenator(isTime: boolean, newDateTime: string): string {
     let currentDateTime = moment(this.selectedDate.value);
     let concatenatedString: string;
+
     if (isTime) {
       let date = currentDateTime.format("D MMMM YYYY");
+      if (date === "Invalid date") {
+        date = '';
+      }
       concatenatedString = date + " " + newDateTime;
     } else {
       let time = currentDateTime.format("h:mm a");
+      if (time === "Invalid date") {
+        time = '';
+      }
       concatenatedString = newDateTime + " " + time;
     }
     return concatenatedString;
-  }
-
-  /**
-   * date validator used to validate form. Code from 
-   * https://stackoverflow.com/questions/51905033/pre-populating-and-validating-date-in-angular-6-reactive-form
-   * @param format 
-   */
-  dateValidator(format): any {
-    return (control: FormControl): { [key: string]: any } => {
-      if (isNullOrUndefined(control.value) || control.value == '') {
-        return null;
-      }
-      const val = moment(control.value, format, true);
-
-      if (!val.isValid()) {
-        return { invalidDate: true };
-      }
-
-      return null;
-    };
   }
 
   /**
@@ -141,8 +129,6 @@ export class DateTimePickerComponent implements ControlValueAccessor {
     timePickerModal.onDidDismiss()
       .then((data) => {
         if (!(isNullOrUndefined(data.data) || isNullOrUndefined(data.data.time) || data.data.time === 'Invalid time')) {
-          
-          console.log("Time " + data.data.time);
           let newDateTime = this.dateTimeConcatenator(true, data.data.time);
           this.writeValue(newDateTime);
           this.onTouch();
@@ -158,8 +144,6 @@ export class DateTimePickerComponent implements ControlValueAccessor {
       let currentDateTime = moment(new Date()).format("D MMMM YYYY h:mm a");
       this.selectedDate.setValue(currentDateTime);
       console.log(this.selectedDate.value);
-      console.log("isStartDate ", this.isStartDate);
-      console.log("Start Date ", this.inputtedStartDate);
       this.onChange(this.selectedDate.value);
     } else {
       this.selectedDate.setValue(value);
