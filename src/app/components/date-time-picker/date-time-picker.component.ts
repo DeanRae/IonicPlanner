@@ -1,8 +1,9 @@
 import { Component, forwardRef, OnInit, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Ionic4DatepickerModalComponent } from '@logisticinfotech/ionic4-datepicker';
+import { IonicTimepickerModalComponent } from '@logisticinfotech/ionic-timepicker';
 import * as moment from 'moment';
-import { isNullOrUndefined } from 'util';
+import { isNullOrUndefined, isNull } from 'util';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormGroup, Validators, FormBuilder, FormControl } from '@angular/forms';
 
 @Component({
@@ -30,7 +31,7 @@ export class DateTimePickerComponent implements ControlValueAccessor {
   datePickerObj: any = {
     closeOnSelect: true,
     mondayFirst: true,
-    titleLabel: 'Select a Date',
+    titleLabel: 'Select a ' + (this.isStartDate ? 'Start' : 'End') + ' Date',
     monthsList: [
       'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
     ],
@@ -40,6 +41,15 @@ export class DateTimePickerComponent implements ControlValueAccessor {
     dateFormat: 'D MMMM YYYY',
     momentLocale: 'en-NZ'
   }
+
+  timePickerObj: any = {
+    timeFormat: 'h:mm a',
+    setLabel: 'Set',
+    closeLabel: 'Close',
+    titleLabel: 'Select a ' + (this.isStartDate ? 'Start' : 'End') + ' Time',
+    clearButton: false,
+    momentLocale: 'en-NZ',
+  };
 
   constructor(public modalCtrl: ModalController, private formBuilder: FormBuilder) {
     // create form validation for user inputted date
@@ -58,7 +68,7 @@ export class DateTimePickerComponent implements ControlValueAccessor {
    * @param isTime if the new input is a time input
    * @param newDateTime the new input from the pickers (may be date or time)
    */
-  dateTimeConcatenator(isTime:boolean, newDateTime:string):string {
+  dateTimeConcatenator(isTime: boolean, newDateTime: string): string {
     let currentDateTime = moment(this.selectedDate.value);
     let concatenatedString: string;
     if (isTime) {
@@ -109,9 +119,32 @@ export class DateTimePickerComponent implements ControlValueAccessor {
     await datePickerModal.present();
     datePickerModal.onDidDismiss()
       .then((data) => {
-        if (!(isNullOrUndefined(data.data) || data.data.date === 'Invalid date')) {
-          let newDate = this.dateTimeConcatenator(false, data.data.date);
-          this.writeValue(newDate);
+        if (!(isNullOrUndefined(data.data) || isNullOrUndefined(data.data.date) || data.data.date === 'Invalid date')) {
+          let newDateTime = this.dateTimeConcatenator(false, data.data.date);
+          this.writeValue(newDateTime);
+          this.onTouch();
+        }
+      });
+  }
+
+   /**
+   * Opens and handles the time picker component modal made by logisticinfotech
+   */
+  async openTimePicker() {
+    const timePickerModal = await this.modalCtrl.create({
+      component: IonicTimepickerModalComponent,
+      cssClass: 'li-ionic-timepicker',
+      componentProps: { 'objConfig': this.timePickerObj}
+    });
+
+    await timePickerModal.present();
+    timePickerModal.onDidDismiss()
+      .then((data) => {
+        if (!(isNullOrUndefined(data.data) || isNullOrUndefined(data.data.time) || data.data.time === 'Invalid time')) {
+          
+          console.log("Time " + data.data.time);
+          let newDateTime = this.dateTimeConcatenator(true, data.data.time);
+          this.writeValue(newDateTime);
           this.onTouch();
         }
       });
