@@ -1,10 +1,10 @@
-import { Component, forwardRef, Input } from '@angular/core';
+import { Component, forwardRef, Input, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Ionic4DatepickerModalComponent } from '@logisticinfotech/ionic4-datepicker';
 import { IonicTimepickerModalComponent } from '@logisticinfotech/ionic-timepicker';
 import * as moment from 'moment';
 import { isNullOrUndefined } from 'util';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormGroup, Validators, FormBuilder, FormControl } from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormGroup, FormBuilder, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-date-time-picker',
@@ -16,9 +16,8 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormGroup, Validators, FormBui
     multi: true
   }]
 })
-export class DateTimePickerComponent implements ControlValueAccessor {
+export class DateTimePickerComponent implements ControlValueAccessor, OnInit {
   @Input() isStartDate: boolean;
-  @Input() inputtedStartDate: string;
   public dateTimeForm: FormGroup;
 
   private onChange: Function = (newDate: string) => { };
@@ -28,35 +27,45 @@ export class DateTimePickerComponent implements ControlValueAccessor {
   /**
    * Config for the calendar date picker component from logisticinfotech
    */
-  datePickerObj: any = {
-    closeOnSelect: true,
-    mondayFirst: true,
-    titleLabel: 'Select a ' + (this.isStartDate ? 'Start' : 'End') + ' Date',
-    monthsList: [
-      'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
-    ],
-    weeksList: [
-      'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'
-    ],
-    dateFormat: 'D MMMM YYYY',
-    momentLocale: 'en-NZ'
-  }
+  datePickerObj: any;
 
-  timePickerObj: any = {
-    timeFormat: 'h:mm a',
-    setLabel: 'Set',
-    closeLabel: 'Close',
-    titleLabel: 'Select a ' + (this.isStartDate ? 'Start' : 'End') + ' Time',
-    clearButton: false,
-    momentLocale: 'en-NZ',
-  };
+  /**
+   * Config for the time picker component from logisticinfotech
+   */
+  timePickerObj: any;
 
   constructor(public modalCtrl: ModalController, private formBuilder: FormBuilder) {
     // create form validation for user inputted date
     this.dateTimeForm = this.formBuilder.group({
       selectedDate: new FormControl('')
     });
+  }
 
+  ngOnInit() {
+    this.datePickerObj = {
+      closeOnSelect: true,
+      mondayFirst: true,
+      titleLabel: 'Select ' + (this.isStartDate ? 'Start' : 'End') + ' Date',
+      monthsList: [
+        'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
+      ],
+      weeksList: [
+        'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'
+      ],
+      dateFormat: 'D MMMM YYYY',
+      momentLocale: 'en-NZ'
+    }
+
+    let defaultInitDate = new Date();
+    this.timePickerObj = {
+      inputTime: this.selectedDate.value ? new Date(this.selectedDate.value) : (this.isStartDate ? defaultInitDate : defaultInitDate.setMinutes(defaultInitDate.getMinutes() + 30)),
+      timeFormat: 'h:mm a',
+      setLabel: 'Set',
+      closeLabel: 'Close',
+      titleLabel: (this.isStartDate ? 'Start' : 'End') + ' Time',
+      clearButton: false,
+      momentLocale: 'en-NZ',
+    };
   }
 
   /**
@@ -98,10 +107,18 @@ export class DateTimePickerComponent implements ControlValueAccessor {
    * Opens and handles the calendar date picker component modal made by logisticinfotech
    */
   async openDatePicker() {
+    // set the time that the picker will use when opened.
+    let selectedDay: any = moment(this.selectedDate.value).format('D MMMM YYYY');
+    if (selectedDay === 'Invalid date' || selectedDay === 'Invalid time') {
+      selectedDay = new Date();
+    } else {
+      selectedDay = new Date(this.selectedDate.value);
+    }
+
     const datePickerModal = await this.modalCtrl.create({
       component: Ionic4DatepickerModalComponent,
       cssClass: 'li-ionic4-datePicker',
-      componentProps: { 'objConfig': this.datePickerObj }
+      componentProps: { 'objConfig': this.datePickerObj, 'selectedDate': selectedDay}
     });
 
     await datePickerModal.present();
@@ -119,10 +136,18 @@ export class DateTimePickerComponent implements ControlValueAccessor {
    * Opens and handles the time picker component modal made by logisticinfotech
    */
   async openTimePicker() {
+    // set the time that the picker will use when opened.
+    let selectedTime: any = moment(this.selectedDate.value).format('h:mm a');
+    if (selectedTime === 'Invalid date' || selectedTime === 'Invalid time') {
+      selectedTime = new Date();
+    } else {
+      selectedTime = new Date(this.selectedDate.value);
+    }
+
     const timePickerModal = await this.modalCtrl.create({
       component: IonicTimepickerModalComponent,
       cssClass: 'li-ionic-timepicker',
-      componentProps: { 'objConfig': this.timePickerObj}
+      componentProps: { 'objConfig': this.timePickerObj, 'selectedTime': selectedTime}
     });
 
     await timePickerModal.present();
