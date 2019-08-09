@@ -2,10 +2,14 @@ ion-item {
     --background: #efefef;
 }
 
-.subTask, .subTask ion-item {
+.subTask, .subTask ion-item, .taskActiveToggle {
     --background: white;
 }
 
-.deleteCheckboxButt {
+.overrideButtonOverlay {
     z-index: 3;
+}
+
+ion-select {
+    min-width: 100% !important;
 }
