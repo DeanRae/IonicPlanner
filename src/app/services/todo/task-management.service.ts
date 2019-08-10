@@ -99,14 +99,18 @@ export class TaskManagementService {
     // delete task from uncompleted tasks if it exists
     this.removeTaskFromUncompleted(this.userAllTasksListRef.id, taskId);
 
-    this.userAllTasksListRef.collection("completed_tasks").doc(taskId);
+    this.userAllTasksListRef.collection("completed_tasks").doc(taskId).set({
+      id: taskId
+    });
 
     // do the same for user defined lists (if any)
     if (task.listId != '') {
       // delete task from uncompleted tasks if it exists
       this.removeTaskFromUncompleted(task.listId, taskId);
 
-      this.userListsRef.doc(task.listId).collection("completed_tasks").doc(taskId);
+      this.userListsRef.doc(task.listId).collection("completed_tasks").doc(taskId).set({
+        id: taskId
+      });
     }
   }
 
@@ -151,15 +155,18 @@ export class TaskManagementService {
     // delete task from completed tasks if it exists
     this.removeTaskFromCompleted(this.userAllTasksListRef.id, taskId);
 
-    console.log("here");
-    this.userAllTasksListRef.collection("uncompleted_tasks").doc(taskId);
+    this.userAllTasksListRef.collection("uncompleted_tasks").doc(taskId).set({
+      id: taskId
+    });
 
     // do the same for user defined lists (if any)
     if (task.listId != '') {
       // delete task from uncompleted tasks if it exists
       this.removeTaskFromCompleted(task.listId, taskId);
 
-      this.userListsRef.doc(task.listId).collection("uncompleted_tasks").doc(taskId);
+      this.userListsRef.doc(task.listId).collection("uncompleted_tasks").doc(taskId).set({
+        id: taskId
+      });
     }
   }
 
@@ -270,9 +277,13 @@ export class TaskManagementService {
 
       if (task.listId != '') {
         if (task.isCompleted) {
-          this.userListsRef.doc(task.listId).collection("completed_tasks").doc(taskId);
+          this.userListsRef.doc(task.listId).collection("completed_tasks").doc(taskId).set({
+            id: taskId
+          });
         } else {
-          this.userListsRef.doc(task.listId).collection("uncompleted_tasks").doc(taskId);
+          this.userListsRef.doc(task.listId).collection("uncompleted_tasks").doc(taskId).set({
+            id: taskId
+          });
         }
       }
     }
