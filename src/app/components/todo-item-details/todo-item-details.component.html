@@ -36,13 +36,20 @@
               {{list?.title}}
             </ion-select-option>
           </ion-select>
-          <ion-icon *ngIf="selectedList != ''" name="close" class="overrideButtonOverlay" (click)="selectedList = ''" slot="end" color="medium"></ion-icon>
+          <ion-icon *ngIf="selectedList != ''" name="close" class="overrideButtonOverlay" (click)="selectedList = ''"
+            slot="end" color="medium"></ion-icon>
         </ion-item>
       </ion-list>
     </ion-col>
-    <!-- <ion-col>
-     <ion-button (click)="printVal()"></ion-button>
-    </ion-col> -->
+  </ion-row>
+  <!-- is task a full day toggle -->
+  <ion-row>
+    <ion-col size="12" size-sm>
+      <ion-item class="toggle" lines="none" no-padding>
+        <ion-label (click)="allDay = !allDay">All Day?</ion-label>
+        <ion-toggle slot="start" [(ngModel)]="allDay" color="success"></ion-toggle>
+      </ion-item>
+    </ion-col>
   </ion-row>
   <!-- start and end date and time selection -->
   <form [formGroup]="taskForm">
@@ -77,22 +84,12 @@
       </ion-col>
     </ion-row>
   </form>
-  <!-- is task active checkbox -->
-  <ion-row>
-    <ion-col size="12" size-sm>
-      <ion-item class="taskActiveToggle">
-        <ion-label>Is this task active?</ion-label>
-        <ion-checkbox slot="start" [ngModel]="currentTask?.isActive ? currentTask.isActive : isActive"
-          (ngModelChange)="currentTask?.isActive ? currentTask.isActive = $event : isActive = $event" color="success"></ion-checkbox>
-      </ion-item>
-    </ion-col>
-  </ion-row>
   <!-- item user inputted description -->
   <ion-row>
     <ion-col>
       <ion-label position="stacked" size="auto">Description</ion-label>
       <ion-item>
-        <ion-textarea value="{{currentTask?.description}}" autoGrow></ion-textarea>
+        <ion-textarea [(ngModel)]="description" autoGrow></ion-textarea>
       </ion-item>
     </ion-col>
   </ion-row>
