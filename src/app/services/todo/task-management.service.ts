@@ -106,7 +106,7 @@ export class TaskManagementService {
       // delete task from uncompleted tasks if it exists
       this.removeTaskFromUncompleted(task.listId, taskId);
 
-      this.userListsRef.doc(task.listId).collection("completed_tasks").doc(taskId)
+      this.userListsRef.doc(task.listId).collection("completed_tasks").doc(taskId);
     }
   }
 
@@ -151,6 +151,7 @@ export class TaskManagementService {
     // delete task from completed tasks if it exists
     this.removeTaskFromCompleted(this.userAllTasksListRef.id, taskId);
 
+    console.log("here");
     this.userAllTasksListRef.collection("uncompleted_tasks").doc(taskId);
 
     // do the same for user defined lists (if any)
@@ -158,7 +159,7 @@ export class TaskManagementService {
       // delete task from uncompleted tasks if it exists
       this.removeTaskFromCompleted(task.listId, taskId);
 
-      this.userListsRef.doc(task.listId).collection("uncompleted_tasks").doc(taskId)
+      this.userListsRef.doc(task.listId).collection("uncompleted_tasks").doc(taskId);
     }
   }
 
@@ -179,7 +180,7 @@ export class TaskManagementService {
         } else {
           isCompleted = true;
         }
-      })
+      });
 
     return isCompleted;
   }
@@ -201,7 +202,7 @@ export class TaskManagementService {
         } else {
           isUncompleted = true;
         }
-      })
+      });
 
     return isUncompleted;
   }
@@ -247,7 +248,7 @@ export class TaskManagementService {
     // first check to see if there are any changes to the assigned list
     let previousListId: string;
 
-    this.userAllTasksListRef.collection("tasks").doc(taskId).get().then(doc => previousListId = doc.data().listId)
+    this.userAllTasksListRef.collection("tasks").doc(taskId).get().then(doc => previousListId = doc.data().listId);
 
     // if there are changes to task status (complete or uncomplete):
     if ((task.listId == previousListId) && task.listId != '') {
@@ -284,7 +285,7 @@ export class TaskManagementService {
   public getTask(taskId: string): firebase.firestore.DocumentReference {
     return this.userAllTasksListRef
       .collection("tasks")
-      .doc(taskId)
+      .doc(taskId);
   }
 
   /**
@@ -295,7 +296,7 @@ export class TaskManagementService {
   public async deleteTask(taskId: string, listId: string) {
     // deletes from completed/uncompleted lists
     let task;
-    this.userAllTasksListRef.collection("all_tasks").doc(taskId).get().then(doc => task = doc.data())
+    this.userAllTasksListRef.collection("all_tasks").doc(taskId).get().then(doc => task = doc.data());
 
     if (task.isCompleted) {
       this.removeTaskFromCompleted(task.listId, taskId);
