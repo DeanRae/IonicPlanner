@@ -18,9 +18,9 @@ export class TodoItemDetailsComponent implements OnInit {
   public currentTask: any; // initialised if an id was passed to this component to populate fields with existing info else null
   public selectedList: any = '';
   public taskForm: FormGroup;
-  public isActive: boolean = false;
   public location: string = '';
   public description: string = '';
+  public allDay: boolean = false;
 
   constructor(private listManagementService: ListManagementService, private taskManagementService: TaskManagementService, public alertController: AlertController, private route: ActivatedRoute, private formBuilder: FormBuilder) {
     // create form validation for user inputted date
@@ -30,27 +30,42 @@ export class TodoItemDetailsComponent implements OnInit {
       title: ['', Validators.required]
     });
   }
-  // firebase.firestore.FieldValue.serverTimestamp()
-  async saveTask(taskForm: FormGroup): Promise<void> {
+
+  public async saveTask(taskForm: FormGroup): Promise<void> {
     if (!taskForm.valid) {
       console.log('Form is not valid yet, current value:', taskForm.value);
     } else {
-      // let task:Task = {
-      //   title: this.title.value,
-      //   listId: this.selectedList ? '':,
-      //   location?: string,
-      //   startTime?: string,
-      //   endTime?: string,
-      //   allDay?: boolean,
-      //   isActive: boolean,
-      //   description?: string,
-      //   subTasks?: Array<any>,
-      //   completionRate?: number,
-      //   createdTimestamp: any,
-      //   updatedTimestamp?: any
+      let task: Task = {
+        title: this.title.value,
+        listId: this.selectedList,
+        location: this.location,
+        startTime: this.startTime.value,
+        endTime: this.endTime.value,
+        allDay: this.allDay,
+        isCompleted: false,
+        description: this.description,
+        subTasks: this.subTasks,
+      }
 
-      // }
-      console.log('At freakin last!');
+      if (this.currentTask) {
+        // update the task
+        try {
+          await this.taskManagementService.editTask(task, this.currentTask.id);
+          console.log("Task: ", task.title, " Edited");
+        }
+        catch (error) {
+          console.error("Error updating task: ", error);
+        }
+      } else {
+        // create new task
+        this.taskManagementService.createTask(task)
+          .then(() => {
+            console.log("Task: ", task.title, " Created")
+          })
+          .catch(error => {
+            console.error("Error creating task: ", error);
+          })
+      }
     }
   }
   /**
@@ -117,13 +132,12 @@ export class TodoItemDetailsComponent implements OnInit {
           this.currentTask.id = taskSnapshot.id;
           this.subTasks = taskSnapshot.get("subTasks");
           this.selectedList = taskSnapshot.get("listId");
-          this.isActive = taskSnapshot.get("isActive");
           this.location = taskSnapshot.get("location");
           this.description = taskSnapshot.get("description");
           this.title.setValue(taskSnapshot.get("title"));
           this.startTime.setValue(taskSnapshot.get("startTime"));
           this.endTime.setValue(taskSnapshot.get("endTime"));
-
+          this.allDay = taskSnapshot.get("allDay");
         });
     }
   }
@@ -162,9 +176,5 @@ export class TodoItemDetailsComponent implements OnInit {
   deleteSubTask(index: number) {
     this.subTasks.splice(index, 1);
     console.log("deleted subtask");
-  }
-
-  printVal() {
-    console.log("Value = ", this.selectedList);
   }
 }
