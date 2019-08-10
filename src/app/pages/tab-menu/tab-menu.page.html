@@ -1,9 +1,24 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>tabMenu</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-tabs>
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="home">
+      <ion-icon name="home"></ion-icon>
+      <ion-label>Home</ion-label>
+    </ion-tab-button>
 
-<ion-content>
+    <ion-tab-button tab="task-lists">
+      <ion-icon name="checkbox-outline"></ion-icon>
+      <ion-label>Task Lists</ion-label>
+    </ion-tab-button>
 
-</ion-content>
+    <ion-tab-button tab="calendar">
+      <ion-icon name="calendar"></ion-icon>
+      <ion-label>Calendar</ion-label>
+      <ion-badge>6</ion-badge>
+    </ion-tab-button>
+
+    <ion-tab-button tab="user-profile">
+      <ion-icon name="person"></ion-icon>
+      <ion-label>User Profile</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>

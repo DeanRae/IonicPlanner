@@ -1,25 +1,18 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
 import { TabMenuPage } from './tab-menu.page';
-
-const routes: Routes = [
-  {
-    path: '',
-    component: TabMenuPage
-  }
-];
+import { TabMenuPageRoutingModule } from './tab-menu.router.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    RouterModule.forChild(routes)
+    TabMenuPageRoutingModule,
   ],
   declarations: [TabMenuPage]
 })
