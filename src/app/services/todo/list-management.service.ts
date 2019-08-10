@@ -36,13 +36,13 @@ export class ListManagementService {
     // create the list that user defined (created as a document in firestore)
     return this.userListsRef.add({
       title: listTitle,
-    })
+    });
   }
 
   editListTitle(listId:string, newListTitle:string){
     this.userListsRef.doc(listId).update({
       title: newListTitle
-    })
+    });
   }
 
   deleteList() {
@@ -51,5 +51,9 @@ export class ListManagementService {
 
   getUserLists(): firebase.firestore.CollectionReference {
     return this.userListsRef;
+  }
+
+  getUserAllTasksList(): firebase.firestore.DocumentReference {
+    return this.userListsRef.doc("all_tasks");
   }
 }
