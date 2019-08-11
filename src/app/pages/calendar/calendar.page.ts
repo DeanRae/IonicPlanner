@@ -1,5 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ListManagementService } from 'src/app/services/todo/list-management.service';
+import { Task } from 'src/app/interfaces/task';
+import { TaskListsPage } from '../task-lists/task-lists.page';
+import { TaskManagementService } from 'src/app/services/todo/task-management.service';
+import { CalendarComponent } from 'ionic2-calendar/calendar';
+import { AlertController } from '@ionic/angular';
+import * as moment from 'moment';
 
+/**
+ * Based on tut from https://devdactic.com/ionic-4-calendar-app/
+ */
 @Component({
   selector: 'app-calendar',
   templateUrl: './calendar.page.html',
@@ -7,25 +17,61 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CalendarPage implements OnInit {
   eventSource = [];
+  viewTitle;
   calendar = {
     mode: 'month',
     currentDate: new Date(),
   }
+  @ViewChild(CalendarComponent) myCal: CalendarComponent;
 
-  constructor() { }
+  constructor(private listManagementService: ListManagementService, private taskManagementService: TaskManagementService, private alertController:AlertController) {
+    this.listManagementService
+      .getUserAllTasksList()
+      .collection("uncompleted_tasks")
+      .onSnapshot(userListSnapshot => {
+        this.eventSource = [];
+        userListSnapshot.forEach(snap => {
+          this.taskManagementService.getTask(snap.id)
+            .get()
+            .then(taskSnapshot => {
+              let task: any = taskSnapshot.data();
+              task.id = snap.id;
+              task.startTime = new Date(taskSnapshot.get("startTime"));
+              task.endTime = new Date(taskSnapshot.get("endTime"));
+              task.title = taskSnapshot.get("title");
+              task.allDay = taskSnapshot.get("allDay");
+              this.eventSource.push(task);
+              this.myCal.loadEvents();
+            });
+        });
+      });
+  }
 
   ngOnInit() {
+
   }
 
-  onViewTitleChanged(title:string) {
-    console.log(title);
+  onViewTitleChanged(title: string) {
+    this.viewTitle = title;
   }
 
-  onEventSelected(event:any) {
-    console.log('Event selected:' + event.startTime + '-' + event.endTime + ',' + event.title);
+  // Calendar event was clicked
+  async onEventSelected(task) {
+    // Use Angular date pipe for conversion
+    let start = task.startTime;
+    let end = task.endTime;
+
+    const alert = await this.alertController.create({
+      header: task.title,
+      subHeader: 'Description: ' + task.description,
+      message: 'From: ' + moment(start).format("D MMMM YYYY h:mm a") 
+              + '<br>To: ' + moment(end).format("D MMMM YYYY h:mm a"),
+      buttons: ['OK']
+    });
+    alert.present();
   }
 
-  onTimeSelected(ev:any) {
+  onTimeSelected(ev: any) {
     console.log('Selected time: ' + ev.selectedTime + ', hasEvents: ' +
       (ev.events !== undefined && ev.events.length !== 0) + ', disabled: ' + ev.disabled);
   }
@@ -34,12 +80,28 @@ export class CalendarPage implements OnInit {
     console.log('current date change: ' + event);
   }
 
-  onRangeChanged(ev:any) {
+  onRangeChanged(ev: any) {
     console.log('range changed: startTime: ' + ev.startTime + ', endTime: ' + ev.endTime);
   }
+
+  // Change current month/week/day
+  next() {
+    var swiper = document.querySelector('.swiper-container')['swiper'];
+    swiper.slideNext();
+  }
+
+  back() {
+    var swiper = document.querySelector('.swiper-container')['swiper'];
+    swiper.slidePrev();
+  }
+
+  // Change between month/week/day
+  changeMode(mode) {
+    this.calendar.mode = mode;
+  }
+
 
   today() {
     this.calendar.currentDate = new Date();
   }
-
 }
