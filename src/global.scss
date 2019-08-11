@@ -1,11 +1,39 @@
 // http://ionicframework.com/docs/theming/
-@import '~@ionic/angular/css/core.css';
-@import '~@ionic/angular/css/normalize.css';
-@import '~@ionic/angular/css/structure.css';
-@import '~@ionic/angular/css/typography.css';
-@import '~@ionic/angular/css/display.css';
-@import '~@ionic/angular/css/padding.css';
-@import '~@ionic/angular/css/float-elements.css';
-@import '~@ionic/angular/css/text-alignment.css';
-@import '~@ionic/angular/css/text-transformation.css';
-@import '~@ionic/angular/css/flex-utils.css';
+@import "~@ionic/angular/css/core.css";
+@import "~@ionic/angular/css/normalize.css";
+@import "~@ionic/angular/css/structure.css";
+@import "~@ionic/angular/css/typography.css";
+@import "~@ionic/angular/css/display.css";
+@import "~@ionic/angular/css/padding.css";
+@import "~@ionic/angular/css/float-elements.css";
+@import "~@ionic/angular/css/text-alignment.css";
+@import "~@ionic/angular/css/text-transformation.css";
+@import "~@ionic/angular/css/flex-utils.css";
+@import "theme/colours";
+
+.li-ionic4-datePicker {
+  .modal-wrapper {
+    height: 75%;
+    max-height: 478px;
+    width: 310px;
+    border-radius: 0px;
+
+    @media (min-width: 768px) {
+      width: 350px;
+      height: 65%;
+    }
+  }
+}
+
+.li-ionic-timepicker {
+  .modal-wrapper {
+    max-height: 276px;
+    width: 310px;
+    min-height: 0;
+    border-radius: 0px;
+  }
+}
+
+.overrideButtonOverlay {
+  z-index: 4;
+}
