@@ -9,8 +9,8 @@ import { isNullOrUndefined } from 'util';
 })
 export class ListManagementService {
   public userListsRef: firebase.firestore.CollectionReference;
-  currentUser: firebase.User;
-  userProfile: firebase.firestore.DocumentReference;
+  public currentUser: firebase.User;
+  public userProfile: firebase.firestore.DocumentReference;
 
   constructor() {
     firebase.auth().onAuthStateChanged(user => {
@@ -82,14 +82,31 @@ export class ListManagementService {
    * Returns a reference to the collection that stores all the user's lists
    * of tasks
    */
-  getUserLists(): firebase.firestore.CollectionReference {
+  public getUserLists(): firebase.firestore.CollectionReference {
     return this.userListsRef;
   }
 
   /**
    * Returns document reference to the default task list
    */
-  getUserAllTasksList(): firebase.firestore.DocumentReference {
+  public getUserAllTasksList(): firebase.firestore.DocumentReference {
     return this.userListsRef.doc("all_tasks");
+  }
+
+  /**
+   * Used to check if a collection e.g. completed_tasks or uncompleted_tasks
+   * exists as it may not due to firestore constraints that collections must
+   * have documents to exist.
+   * @param collectionId 
+   * @param documentId 
+   */
+  public async checkCollectionExistence(documentId:string, collectionId:string) {
+    const query = await this.userListsRef.doc(documentId).collection(collectionId).get();
+    if (query.size > 0) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 }
