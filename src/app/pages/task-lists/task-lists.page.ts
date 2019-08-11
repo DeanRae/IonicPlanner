@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ListManagementService } from 'src/app/services/todo/list-management.service';
 import { TaskManagementService } from 'src/app/services/todo/task-management.service';
+import { ModalController, ToastController, AlertController, PopoverController, ActionSheetController } from '@ionic/angular';
+import { TodoItemDetailsComponent } from 'src/app/components/todo-item-details/todo-item-details.component';
 
 @Component({
   selector: 'app-task-lists',
@@ -10,7 +12,7 @@ import { TaskManagementService } from 'src/app/services/todo/task-management.ser
 export class TaskListsPage implements OnInit {
   public userLists: any;
 
-  constructor(private listManagementService: ListManagementService, private taskManagementService: TaskManagementService) {
+  constructor(private listManagementService: ListManagementService, private taskManagementService: TaskManagementService, private modalController: ModalController, private toastController:ToastController, private alertController: AlertController, private actionSheetController:ActionSheetController) {
     this.listManagementService
       .getUserLists()
       .get()
@@ -80,6 +82,64 @@ export class TaskListsPage implements OnInit {
 
   }
 
+  async presentTaskModal(task:any) {
+    const modal = await this.modalController.create({
+      component: TodoItemDetailsComponent,
+      componentProps: {
+        'id': task.id
+      }
+    });
+    return await modal.present();
+  }
+
+  async presentTaskActionSheet(task:any) {
+    const actionSheet = await this.actionSheetController.create({
+      header: task.title,
+      buttons: [{
+        text: 'Delete',
+        role: 'destructive',
+        icon: 'trash',
+        handler: () => {
+          this.confirmTaskDeletionAlert(task);
+        }
+      }, {
+        text: 'Edit',
+        icon: 'create',
+        handler: () => {
+          this.presentTaskModal(task);
+        }
+      },
+      {
+        text: 'Cancel',
+        icon: 'close',
+        role: 'cancel'
+      }]
+    });
+    await actionSheet.present();
+  }
+
+  async confirmTaskDeletionAlert(task:any) {
+    const alert = await this.alertController.create({
+      header: 'Confirm',
+      message: 'Are you sure you want to delete the task ' + task.title + '?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary'
+        }, {
+          text: 'Okay',
+          handler: () => {
+            this.taskManagementService.deleteTask(task.id);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+
   /**
    * Code based on tut https://www.youtube.com/watch?v=w5PR_d6eiQI
    * @param index 
@@ -109,7 +169,7 @@ export class TaskListsPage implements OnInit {
    */
   toggleSubList(index, subIndex) {
     this.userLists[index].subLists[subIndex].open = !this.userLists[index].subLists[subIndex].open;
-    // console.log("Task title ", this.userLists[index].subLists[0].tasks[0]);
+     console.log("Task title ", this.userLists[index].subLists[0].tasks[0]);
 
     
     if (this.userLists[index].open) {

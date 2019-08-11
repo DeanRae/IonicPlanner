@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { TaskListsPage } from './task-lists.page';
 import { ExpandableModule } from 'src/app/components/expandable/expandable.module';
+import { TodoItemDetailsModule } from 'src/app/components/todo-item-details/todo-item-details.module';
 
 const routes: Routes = [
   {
@@ -21,6 +22,7 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     ExpandableModule,
+    TodoItemDetailsModule,
     RouterModule.forChild(routes)
   ],
   declarations: [TaskListsPage]
