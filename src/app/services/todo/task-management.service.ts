@@ -12,7 +12,6 @@ export class TaskManagementService {
   public userListsRef: firebase.firestore.CollectionReference;
   public userAllTasksListRef: firebase.firestore.DocumentReference;
   private currentUser: firebase.User;
-  private userProfile: firebase.firestore.DocumentReference;
 
   constructor() {
     firebase.auth().onAuthStateChanged(user => {
@@ -28,7 +27,6 @@ export class TaskManagementService {
     // just in case code above does not save the reference
     if (isNullOrUndefined(this.userListsRef)) {
       this.currentUser = firebase.auth().currentUser;
-      this.userProfile = firebase.firestore().doc(`/userProfile/${this.currentUser.uid}`);
 
       this.userListsRef = firebase
         .firestore()
@@ -50,20 +48,6 @@ export class TaskManagementService {
 
     // add to default list
     try {
-      const docRef = await this.userAllTasksListRef.collection("tasks").doc(newTaskRef.id)
-        .set({
-          title: task.title,
-          listId: task.listId,
-          location: task.location,
-          startTime: task.startTime,
-          endTime: task.endTime,
-          allDay: task.allDay,
-          isCompleted: task.isCompleted,
-          description: task.description,
-          subTasks: task.subTasks,
-          createdTimestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          id: newTaskRef.id
-        });
       console.log("Document written with ID: ", newTaskRef.id, " to default list All Tasks");
     }
     catch (error) {
@@ -177,19 +161,21 @@ export class TaskManagementService {
    * @param taskId 
    * @returns true if present in given list's "completed_tasks"
    */
-  private isTaskCompleted(listId: string, taskId: string): boolean {
-    let isCompleted = false;
-    this.userListsRef.doc(listId).collection("completed_tasks").where("id", "==", taskId)
-      .get()
-      .then(result => {
-        if (result.empty) {
-          isCompleted = false;
-        } else {
-          isCompleted = true;
-        }
-      });
-
-    return isCompleted;
+  private async isTaskCompleted(listId: string, taskId: string) {
+    try {
+      const result = await this.userListsRef.doc(listId).collection("completed_tasks").where("id", "==", taskId)
+        .get();
+      if (result.empty) {
+        return false;
+      }
+      else {
+        return true;
+      }
+    }
+    catch (e) {
+      console.log("Error checking if userList ", listId, " has completed task of id ", taskId)
+      return false;
+    }
   }
 
   /**
@@ -199,19 +185,21 @@ export class TaskManagementService {
    * @param taskId 
    * @returns true if present in given list's "uncompleted_tasks"
    */
-  private isTaskUncompleted(listId: string, taskId: string): boolean {
-    let isUncompleted = false;
-    this.userListsRef.doc(listId).collection("uncompleted_tasks").where("id", "==", taskId)
-      .get()
-      .then(result => {
-        if (result.empty) {
-          isUncompleted = false;
-        } else {
-          isUncompleted = true;
-        }
-      });
-
-    return isUncompleted;
+  private async isTaskUncompleted(listId: string, taskId: string) {
+    try {
+      const result = await this.userListsRef.doc(listId).collection("uncompleted_tasks").where("id", "==", taskId)
+        .get();
+      if (result.empty) {
+        return false;
+      }
+      else {
+        return true;
+      }
+    }
+    catch (e) {
+      console.log("Error checking if userList ", listId, " has uncompleted task of id ", taskId)
+      return false;
+    }
   }
 
   /**
@@ -299,12 +287,35 @@ export class TaskManagementService {
       .doc(taskId);
   }
 
+  public async getTaskObject(taskId: string) {
+    try {
+      const taskSnapshot = await this.getTask(taskId).get();
+      return {
+        title: taskSnapshot.get("title"),
+        subTasks: taskSnapshot.get("subTasks"),
+        listId: taskSnapshot.get("listId"),
+        location: taskSnapshot.get("location"),
+        description: taskSnapshot.get("description"),
+        startTime: taskSnapshot.get("startTime"),
+        endTime: taskSnapshot.get("endTime"),
+        allDay: taskSnapshot.get("allDay"),
+        isCompleted: taskSnapshot.get("isCompleted"),
+        completionRate: taskSnapshot.get("completionRate"),
+        createdTimestamp: taskSnapshot.get("createdTimestamp"),
+        updatedTimestamp: taskSnapshot.get("updatedTimestamp"),
+      };
+    }
+    catch (error) {
+      console.log("error getting and creating task object ", error);
+    }
+  }
+
   /**
    * Deletes the task from all relevant lists/collections
    * @param taskId 
    * @param listId 
    */
-  public async deleteTask(taskId: string, listId: string) {
+  public async deleteTask(taskId: string) {
     // deletes from completed/uncompleted lists
     let task;
     this.userAllTasksListRef.collection("all_tasks").doc(taskId).get().then(doc => task = doc.data());
