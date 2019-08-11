@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ListManagementService } from 'src/app/services/todo/list-management.service';
-import { AlertController } from '@ionic/angular';
+import { AlertController, NavParams, ModalController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { TaskManagementService } from 'src/app/services/todo/task-management.service';
 import { isNullOrUndefined } from 'util';
@@ -22,13 +22,54 @@ export class TodoItemDetailsComponent implements OnInit {
   public description: string = '';
   public allDay: boolean = false;
 
-  constructor(private listManagementService: ListManagementService, private taskManagementService: TaskManagementService, public alertController: AlertController, private route: ActivatedRoute, private formBuilder: FormBuilder) {
+  constructor(private listManagementService: ListManagementService, private taskManagementService: TaskManagementService, public alertController: AlertController, private modalController:ModalController, private formBuilder: FormBuilder, private navParams: NavParams) {
     // create form validation for user inputted date
     this.taskForm = this.formBuilder.group({
       startTime: [moment(new Date()).format("D MMMM YYYY h:mm a"), this.dateValidator("D MMMM YYYY h:mm a")],
       endTime: [moment(new Date()).format("D MMMM YYYY h:mm a"), this.dateValidator("D MMMM YYYY h:mm a")],
       title: ['', Validators.required]
     });
+
+    // this provides the lists that the user has so that they can select which list their task belongs to later
+    this.listManagementService
+      .getUserLists()
+      .onSnapshot(userListSnapshot => {
+        this.listTitleList = [];
+        userListSnapshot.forEach(snap => {
+          if (snap.data().title != "All Tasks") {
+            this.listTitleList.push({
+              id: snap.id,
+              title: snap.data().title,
+            });
+          }
+        });
+      });
+
+    // will check if an id was passed to this component and uses the id to 
+    //populate the form based on user's previous input - (for their editing convenience)
+    let taskId: string = this.navParams.get('id');
+
+    if (taskId) {
+      this.taskManagementService
+        .getTask(taskId)
+        .get()
+        .then(taskSnapshot => {
+          this.currentTask = taskSnapshot.data();
+          this.currentTask.id = taskSnapshot.id;
+          this.subTasks = taskSnapshot.get("subTasks");
+          this.selectedList = taskSnapshot.get("listId");
+          this.location = taskSnapshot.get("location");
+          this.description = taskSnapshot.get("description");
+          this.title.setValue(taskSnapshot.get("title"));
+          this.startTime.setValue(taskSnapshot.get("startTime"));
+          this.endTime.setValue(taskSnapshot.get("endTime"));
+          this.allDay = taskSnapshot.get("allDay");
+        });
+    }
+  }
+
+  ngOnInit() {
+    
   }
 
   public async saveTask(taskForm: FormGroup): Promise<void> {
@@ -103,45 +144,6 @@ export class TodoItemDetailsComponent implements OnInit {
    */
   get title() { return this.taskForm.get('title'); }
 
-  ngOnInit() {
-    // this provides the lists that the user has so that they can select which list their task belongs to later
-    this.listManagementService
-      .getUserLists()
-      .onSnapshot(userListSnapshot => {
-        this.listTitleList = [];
-        userListSnapshot.forEach(snap => {
-          if (snap.data().title != "All Tasks") {
-            this.listTitleList.push({
-              id: snap.id,
-              title: snap.data().title,
-            });
-          }
-        });
-      });
-
-    // will check if an id was passed to this component and uses the id to 
-    //populate the form based on user's previous input - (for their editing convenience)
-    let taskId: string = this.route.snapshot.queryParamMap.get('id');
-
-    if (taskId) {
-      this.taskManagementService
-        .getTask(taskId)
-        .get()
-        .then(taskSnapshot => {
-          this.currentTask = taskSnapshot.data();
-          this.currentTask.id = taskSnapshot.id;
-          this.subTasks = taskSnapshot.get("subTasks");
-          this.selectedList = taskSnapshot.get("listId");
-          this.location = taskSnapshot.get("location");
-          this.description = taskSnapshot.get("description");
-          this.title.setValue(taskSnapshot.get("title"));
-          this.startTime.setValue(taskSnapshot.get("startTime"));
-          this.endTime.setValue(taskSnapshot.get("endTime"));
-          this.allDay = taskSnapshot.get("allDay");
-        });
-    }
-  }
-
   async addSubTask(): Promise<void> {
     const alert = await this.alertController.create({
       subHeader: 'Create Sub-Task',
@@ -176,5 +178,12 @@ export class TodoItemDetailsComponent implements OnInit {
   deleteSubTask(index: number) {
     this.subTasks.splice(index, 1);
     console.log("deleted subtask");
+  }
+
+  /**
+   * Dismiss this modal
+   */
+  public dismissModal() {
+    this.modalController.dismiss();
   }
 }

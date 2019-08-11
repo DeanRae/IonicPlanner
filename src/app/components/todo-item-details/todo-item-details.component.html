@@ -1,121 +1,134 @@
-<ion-grid padding>
-  <form [formGroup]="taskForm">
-    <!-- list item (event or task) title-->
+<ion-header padding>
+  <ion-toolbar mode="ios">
+      <ion-buttons slot="start">
+          <ion-button (click)="dismissModal()">Back</ion-button>
+      </ion-buttons>
+
+    <ion-title *ngIf="currentTask">Edit Task</ion-title>
+    <ion-title *ngIf="!currentTask">Create Task</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [scrollEvents]="true">
+  <ion-grid padding>
+    <form [formGroup]="taskForm">
+      <!-- list item (event or task) title-->
+      <ion-row>
+        <ion-col size="12" size-sm>
+          <ion-label position="stacked">Title</ion-label>
+          <ion-item>
+            <ion-input formControlName="title"
+              [class.invalid]="!taskForm.controls['title'].valid&& (taskForm.controls['title'].touched || taskForm.controls['title'].dirty)">
+            </ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col></ion-col>
+      </ion-row>
+    </form>
+    <!-- location selection-->
     <ion-row>
       <ion-col size="12" size-sm>
-        <ion-label position="stacked">Title</ion-label>
+        <ion-label position="stacked">Location</ion-label>
         <ion-item>
-          <ion-input formControlName="title"
-            [class.invalid]="!taskForm.controls['title'].valid&& (taskForm.controls['title'].touched || taskForm.controls['title'].dirty)">
-          </ion-input>
+          <ion-input [(ngModel)]="location"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col></ion-col>
     </ion-row>
-  </form>
-  <!-- location selection-->
-  <ion-row>
-    <ion-col size="12" size-sm>
-      <ion-label position="stacked">Location</ion-label>
-      <ion-item>
-        <ion-input [(ngModel)]="location"></ion-input>
-      </ion-item>
-    </ion-col>
-    <ion-col></ion-col>
-  </ion-row>
-  <!-- list and tags selection -->
-  <ion-row>
-    <ion-col size="12" size-sm>
-      <ion-label position="stacked">
-        List
-      </ion-label>
-      <ion-list>
-        <ion-item>
-          <ion-select interface="popover" [(ngModel)]="selectedList" placeholder="Select a list">
-            <ion-select-option *ngFor="let list of listTitleList" value="{{list?.id}}">
-              {{list?.title}}
-            </ion-select-option>
-          </ion-select>
-          <ion-icon *ngIf="selectedList != ''" name="close" class="overrideButtonOverlay" (click)="selectedList = ''"
-            slot="end" color="medium"></ion-icon>
-        </ion-item>
-      </ion-list>
-    </ion-col>
-  </ion-row>
-  <!-- is task a full day toggle -->
-  <ion-row>
-    <ion-col size="12" size-sm>
-      <ion-item class="toggle" lines="none" no-padding>
-        <ion-label (click)="allDay = !allDay">All Day?</ion-label>
-        <ion-toggle slot="start" [(ngModel)]="allDay" color="success"></ion-toggle>
-      </ion-item>
-    </ion-col>
-  </ion-row>
-  <!-- start and end date and time selection -->
-  <form [formGroup]="taskForm">
+    <!-- list and tags selection -->
     <ion-row>
       <ion-col size="12" size-sm>
         <ion-label position="stacked">
-          Start:
+          List
         </ion-label>
-        <app-date-time-picker formControlName="startTime" [class.invalid]="!taskForm.controls['startTime'].valid &&
-      (taskForm.controls['startTime'].touched || taskForm.controls['startTime'].dirty)" [isStartDate]="true">
-        </app-date-time-picker>
-        <!-- start date invalid error -->
-        <ion-item lines="none" class="error-message" *ngIf="!taskForm.controls['startTime'].valid && 
-  (taskForm.controls['startTime'].touched || taskForm.controls['startTime'].dirty)">
-          <ion-icon name="alert" padding></ion-icon>
-          <ion-label text-wrap>Invalid date. Expected format: 1 August 2019 1:38 pm</ion-label>
-        </ion-item>
+        <ion-list>
+          <ion-item>
+            <ion-select interface="popover" [(ngModel)]="selectedList" placeholder="Select a list">
+              <ion-select-option *ngFor="let list of listTitleList" value="{{list?.id}}">
+                {{list?.title}}
+              </ion-select-option>
+            </ion-select>
+            <ion-icon *ngIf="selectedList != ''" name="close" class="overrideButtonOverlay" (click)="selectedList = ''"
+              slot="end" color="medium"></ion-icon>
+          </ion-item>
+        </ion-list>
       </ion-col>
+    </ion-row>
+    <!-- is task a full day toggle -->
+    <ion-row>
       <ion-col size="12" size-sm>
-        <ion-label position="stacked">
-          End:
-        </ion-label>
-        <app-date-time-picker formControlName="endTime" [class.invalid]="!taskForm.controls['endTime'].valid &&
-      (taskForm.controls['endTime'].touched || taskForm.controls['endTime'].dirty)" [isStartDate]="false">
-        </app-date-time-picker>
-        <!-- end date invalid error -->
-        <ion-item lines="none" class="error-message" *ngIf="!taskForm.controls['endTime'].valid && 
-  (taskForm.controls['endTime'].touched || taskForm.controls['endTime'].dirty)">
-          <ion-icon name="alert" padding></ion-icon>
-          <ion-label text-wrap>Invalid date. Expected format: 1 August 2019 1:38 pm</ion-label>
+        <ion-item class="toggle" lines="none" no-padding>
+          <ion-label (click)="allDay = !allDay">All Day?</ion-label>
+          <ion-toggle slot="start" [(ngModel)]="allDay" color="success"></ion-toggle>
         </ion-item>
       </ion-col>
     </ion-row>
-  </form>
-  <!-- item user inputted description -->
-  <ion-row>
-    <ion-col>
-      <ion-label position="stacked" size="auto">Description</ion-label>
-      <ion-item>
-        <ion-textarea [(ngModel)]="description" autoGrow></ion-textarea>
-      </ion-item>
-    </ion-col>
-  </ion-row>
-  <!-- item sub-tasks-->
-  <ion-row>
-    <ion-col>
-      <ion-item class="subTask">
-        <ion-label size="auto">Sub-Tasks</ion-label>
-        <ion-button (click)="addSubTask()" fill="clear">New Sub-Task<ion-icon name="add" slot="end"></ion-icon>
-        </ion-button>
-      </ion-item>
-      <ion-list class="subTask">
-        <ion-item *ngIf="!subTasks.length" lines="none">
-          <ion-label color="medium">This task currently has no sub-tasks</ion-label>
+    <!-- start and end date and time selection -->
+    <form [formGroup]="taskForm">
+      <ion-row>
+        <ion-col size="12" size-sm>
+          <ion-label position="stacked">
+            Start:
+          </ion-label>
+          <app-date-time-picker formControlName="startTime" [class.invalid]="!taskForm.controls['startTime'].valid &&
+              (taskForm.controls['startTime'].touched || taskForm.controls['startTime'].dirty)" [isStartDate]="true">
+          </app-date-time-picker>
+          <!-- start date invalid error -->
+          <ion-item lines="none" class="error-message" *ngIf="!taskForm.controls['startTime'].valid && 
+          (taskForm.controls['startTime'].touched || taskForm.controls['startTime'].dirty)">
+            <ion-icon name="alert" padding></ion-icon>
+            <ion-label text-wrap>Invalid date. Expected format: 1 August 2019 1:38 pm</ion-label>
+          </ion-item>
+        </ion-col>
+        <ion-col size="12" size-sm>
+          <ion-label position="stacked">
+            End:
+          </ion-label>
+          <app-date-time-picker formControlName="endTime" [class.invalid]="!taskForm.controls['endTime'].valid &&
+              (taskForm.controls['endTime'].touched || taskForm.controls['endTime'].dirty)" [isStartDate]="false">
+          </app-date-time-picker>
+          <!-- end date invalid error -->
+          <ion-item lines="none" class="error-message" *ngIf="!taskForm.controls['endTime'].valid && 
+          (taskForm.controls['endTime'].touched || taskForm.controls['endTime'].dirty)">
+            <ion-icon name="alert" padding></ion-icon>
+            <ion-label text-wrap>Invalid date. Expected format: 1 August 2019 1:38 pm</ion-label>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </form>
+    <!-- item user inputted description -->
+    <ion-row>
+      <ion-col>
+        <ion-label position="stacked" size="auto">Description</ion-label>
+        <ion-item>
+          <ion-textarea [(ngModel)]="description" autoGrow></ion-textarea>
         </ion-item>
-        <ion-item *ngFor="let task of subTasks; let i = index" lines="none">
-          <ion-label>{{task?.subTask}}</ion-label>
-          <ion-checkbox slot="start" [(ngModel)]="task.isChecked"></ion-checkbox>
-          <ion-icon class="overrideButtonOverlay" name="trash" slot="end" (click)="deleteSubTask(i)"></ion-icon>
+      </ion-col>
+    </ion-row>
+    <!-- item sub-tasks-->
+    <ion-row>
+      <ion-col>
+        <ion-item class="subTask">
+          <ion-label size="auto">Sub-Tasks</ion-label>
+          <ion-button (click)="addSubTask()" fill="clear">New Sub-Task<ion-icon name="add" slot="end"></ion-icon>
+          </ion-button>
         </ion-item>
-      </ion-list>
-    </ion-col>
-  </ion-row>
-  <ion-row>
-    <ion-col>
-      <ion-button (click)="saveTask(taskForm)" [disabled]="!taskForm.valid" expand="full">Save</ion-button>
-    </ion-col>
-  </ion-row>
-</ion-grid>
+        <ion-list class="subTask">
+          <ion-item *ngIf="!subTasks.length" lines="none">
+            <ion-label color="medium">This task currently has no sub-tasks</ion-label>
+          </ion-item>
+          <ion-item *ngFor="let task of subTasks; let i = index" lines="none">
+            <ion-label>{{task?.subTask}}</ion-label>
+            <ion-checkbox slot="start" [(ngModel)]="task.isChecked"></ion-checkbox>
+            <ion-icon class="overrideButtonOverlay" name="trash" slot="end" (click)="deleteSubTask(i)"></ion-icon>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button (click)="saveTask(taskForm)" [disabled]="!taskForm.valid" expand="full">Save</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

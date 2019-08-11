@@ -19,6 +19,9 @@ import { DateTimePickerModule } from '../date-time-picker/date-time-picker.modul
     CalendarDatePickerModule,
     DateTimePickerModule
   ],
+  entryComponents: [
+    TodoItemDetailsComponent,
+  ],
   exports: [
     TodoItemDetailsComponent
   ]
