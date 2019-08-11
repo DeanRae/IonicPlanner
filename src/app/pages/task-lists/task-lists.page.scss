@@ -1,0 +1,48 @@
+// styles based on tut https://www.youtube.com/watch?v=w5PR_d6eiQI
+.accordian-list {
+    margin-bottom: 4px;
+
+    .list, .list-active {
+        --min-height: 58px;
+    }
+}
+
+.list-active {
+    --ion-item-background: var(--ion-color-primary);
+    --ion-item-color: #fff;
+}
+
+.bold, .list-active {
+    font-weight: 600;
+}
+
+.subAccordian {
+    padding: 0px;
+    margin: 0px;
+    .subList, .subList-active {
+        margin-bottom: 2px;
+    }
+}
+
+.subList {
+    --ion-item-background: var(--ion-color-light);
+}
+
+.subList-active {
+    --ion-item-background: var(--ion-color-primary-light);
+}
+
+.task-list {
+    margin: 0px;
+    padding: 0px;
+}
+
+// .complete-button {
+//     ion-button {
+       
+//     }
+// }
+
+.short-card {
+    max-height: 120px;
+}

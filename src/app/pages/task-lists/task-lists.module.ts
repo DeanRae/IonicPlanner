@@ -6,6 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { TaskListsPage } from './task-lists.page';
+import { ExpandableModule } from 'src/app/components/expandable/expandable.module';
 
 const routes: Routes = [
   {
@@ -19,6 +20,7 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
+    ExpandableModule,
     RouterModule.forChild(routes)
   ],
   declarations: [TaskListsPage]

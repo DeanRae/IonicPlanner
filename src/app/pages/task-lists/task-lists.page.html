@@ -1,9 +1,66 @@
+<!-- based on tut https://www.youtube.com/watch?v=w5PR_d6eiQI -->
 <ion-header padding>
   <ion-toolbar mode="ios">
     <ion-title>Task Lists</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content padding>
+  <ion-list *ngFor="let list of userLists; let i = index;" class="accordian-list">
+    <ion-item tappable (click)="toggleList(i)" [ngClass]="{'list-active':list.open, 'list':!list.open}">
+      <ion-label>
+        {{list.title}}
+      </ion-label>
+      <ion-icon name="arrow-dropdown" *ngIf="!list.open"></ion-icon>
+      <ion-icon name="arrow-dropup" *ngIf="list.open"></ion-icon>
+    </ion-item>
 
+    <div *ngIf="list.subLists && list.open">
+      <ion-list *ngFor="let subList of list.subLists; let j = index;" lines="none" class="subAccordian">
+        <ion-item tappable (click)="toggleSubList(i,j)"
+          [ngClass]="{'subList-active':subList.open, 'subList':!subList.open}">
+          <ion-label>
+            {{subList.title}}
+          </ion-label>
+          <ion-icon name="arrow-dropdown" *ngIf="!subList.open"></ion-icon>
+          <ion-icon name="arrow-dropup" *ngIf="subList.open"></ion-icon>
+        </ion-item>
+        <ion-list *ngIf="subList.tasks && subList.open" class="task-list" lines="none">
+
+          <ion-card (click)="expandCard(task)" *ngFor="let task of subList.tasks" [ngClass]="{'short-card':!task.expanded}">
+            <ion-card-header>
+              <ion-card-subtitle>Due Date: {{task.details.endTime}}</ion-card-subtitle>
+              <ion-card-title>{{task.details.title}}</ion-card-title>
+              <ion-item *ngIf="!task.expanded">
+                <ion-icon name="more" slot="end"></ion-icon>
+              </ion-item>
+            </ion-card-header>
+
+            <ion-card-content>
+              <app-expandable expandHeight="500px" [expanded]="task.expanded">
+                <ion-label class="bold">Start Date: </ion-label>
+                {{task.details.startTime}}
+                <br>
+                <ion-label class="bold">Location: </ion-label>
+                {{task.details.location}}
+                <br>
+                <ion-label class="bold">Description: </ion-label>
+                {{task.details.description}}
+                <br>
+                <ion-item class="complete-button, overrideButtonOverlay">
+                  <ion-button expand="full" (click)="$event.stopPropagation();">COMPLETE</ion-button>
+                  <ion-icon mode="md" name="more" slot="end" (click)="$event.stopPropagation();"></ion-icon>
+                </ion-item>
+              </app-expandable>
+
+            </ion-card-content>
+          </ion-card>
+        </ion-list>
+
+        <p *ngIf="subList.tasks.length == 0 && subList.open" text-center>
+          There are no {{subList.title}}
+        </p>
+      </ion-list>
+    </div>
+  </ion-list>
 </ion-content>
