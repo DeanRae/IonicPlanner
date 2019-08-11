@@ -88,7 +88,7 @@ export class TaskManagementService {
     });
 
     // do the same for user defined lists (if any)
-    if (task.listId != '') {
+    if (task.listId) {
       // delete task from uncompleted tasks if it exists
       this.removeTaskFromUncompleted(task.listId, taskId);
 
@@ -107,7 +107,7 @@ export class TaskManagementService {
    */
   private removeTaskFromUncompleted(listId: string, taskId: string) {
     if (this.isTaskUncompleted(listId, taskId)) {
-      this.userListsRef.doc(listId).collection("uncompleted_tasks")
+      return this.userListsRef.doc(listId).collection("uncompleted_tasks")
         .doc(taskId)
         .delete();
     }
@@ -122,7 +122,7 @@ export class TaskManagementService {
    */
   private removeTaskFromCompleted(listId: string, taskId: string) {
     if (this.isTaskCompleted(listId, taskId)) {
-      this.userListsRef.doc(listId).collection("completed_tasks")
+      return this.userListsRef.doc(listId).collection("completed_tasks")
         .doc(taskId)
         .delete();
     }
@@ -137,14 +137,14 @@ export class TaskManagementService {
    */
   private setTaskUncomplete(task: Task, taskId: string) {
     // delete task from completed tasks if it exists
-    this.removeTaskFromCompleted(this.userAllTasksListRef.id, taskId);
+    this.removeTaskFromCompleted(this.userAllTasksListRef.id, taskId)
 
     this.userAllTasksListRef.collection("uncompleted_tasks").doc(taskId).set({
       id: taskId
     });
 
     // do the same for user defined lists (if any)
-    if (task.listId != '') {
+    if (task.listId) {
       // delete task from uncompleted tasks if it exists
       this.removeTaskFromCompleted(task.listId, taskId);
 
@@ -208,12 +208,13 @@ export class TaskManagementService {
    * @param taskId 
    */
   public async editTask(task: Task, taskId: string) {
+    console.log("Task id ", taskId);
+    console.log("task edit: ", task);
     // edit the tasks completed/uncompleted status in relevant lists
-    this.editTaskStatus(task, taskId);
-    // add all task changes to default list
+    await this.editTaskStatus(task, taskId);
     try {
       return this.userAllTasksListRef
-        .collection("all_tasks")
+        .collection("tasks")
         .doc(taskId)
         .update({
           title: task.title,
@@ -239,36 +240,41 @@ export class TaskManagementService {
    * @param task 
    * @param taskId 
    */
-  private editTaskStatus(task: Task, taskId: string) {
+  private async editTaskStatus(task: Task, taskId: string) {
     // first check to see if there are any changes to the assigned list
-    let previousListId: string;
 
-    this.userAllTasksListRef.collection("tasks").doc(taskId).get().then(doc => previousListId = doc.data().listId);
-
+    const doc = await this.userAllTasksListRef
+      .collection("tasks")
+      .doc(taskId)
+      .get();
+    let previousListId = doc.data().listId;
     // if there are changes to task status (complete or uncomplete):
-    if ((task.listId == previousListId) && task.listId != '') {
+    if ((task.listId == previousListId) && task.listId && previousListId) {
       // switch if taskList is still the same
       if (task.isCompleted && this.isTaskUncompleted(previousListId, taskId)) {
         this.setTaskComplete(task, taskId);
-      } else if (!task.isCompleted && this.isTaskCompleted(previousListId, taskId)) {
+      }
+      else if (!task.isCompleted && this.isTaskCompleted(previousListId, taskId)) {
         this.setTaskUncomplete(task, taskId);
       }
-    } else if ((task.listId != previousListId)) {
+    }
+    else if ((task.listId != previousListId)) {
       // remove from previous list if not the same and move to new list
-      if (previousListId != '') {
+      if (previousListId) {
         if (this.isTaskCompleted(previousListId, taskId)) {
           this.removeTaskFromCompleted(previousListId, taskId);
-        } else {
+        }
+        else {
           this.removeTaskFromUncompleted(previousListId, taskId);
         }
       }
-
-      if (task.listId != '') {
+      if (task.listId) {
         if (task.isCompleted) {
           this.userListsRef.doc(task.listId).collection("completed_tasks").doc(taskId).set({
             id: taskId
           });
-        } else {
+        }
+        else {
           this.userListsRef.doc(task.listId).collection("uncompleted_tasks").doc(taskId).set({
             id: taskId
           });
@@ -291,6 +297,7 @@ export class TaskManagementService {
     try {
       const taskSnapshot = await this.getTask(taskId).get();
       return {
+        id: taskId,
         title: taskSnapshot.get("title"),
         subTasks: taskSnapshot.get("subTasks"),
         listId: taskSnapshot.get("listId"),
@@ -317,27 +324,32 @@ export class TaskManagementService {
    */
   public async deleteTask(taskId: string) {
     // deletes from completed/uncompleted lists
-    let task;
-    this.userAllTasksListRef.collection("all_tasks").doc(taskId).get().then(doc => task = doc.data());
 
+    const doc = await this.userAllTasksListRef
+      .collection("tasks")
+      .doc(taskId)
+      .get();
+    let task = doc.data();
     if (task.isCompleted) {
       this.removeTaskFromCompleted(task.listId, taskId);
       this.removeTaskFromCompleted(this.userAllTasksListRef.id, taskId);
-    } else {
+    }
+    else {
       this.removeTaskFromUncompleted(task.listId, taskId);
       this.removeTaskFromUncompleted(this.userAllTasksListRef.id, taskId);
     }
-
     // delete from default list that stores all tasks
     try {
       return this.userAllTasksListRef
-        .collection("all_tasks")
+        .collection("tasks")
         .doc(taskId)
         .delete();
     }
     catch (error) {
       console.error("Error removing document: ", error);
     }
+
+
   }
 
 }
