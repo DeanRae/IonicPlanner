@@ -41,6 +41,7 @@ export class ListManagementService {
     try {
       return this.userListsRef.add({
         title: listTitle,
+        createdTimestamp: firebase.firestore.FieldValue.serverTimestamp(),
       });
     }
     catch (error) {
@@ -56,7 +57,8 @@ export class ListManagementService {
   public async editListTitle(listId: string, newListTitle: string): Promise<any> {
     try {
       return this.userListsRef.doc(listId).update({
-        title: newListTitle
+        title: newListTitle,
+        updatedTimestamp: firebase.firestore.FieldValue.serverTimestamp(),
       });
     }
     catch (error) {
