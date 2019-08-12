@@ -62,7 +62,7 @@ export class HomePage implements OnInit {
                 endTime: taskSnapshot.get("endTime"),
                 allDay: taskSnapshot.get("allDay"),
                 isCompleted: taskSnapshot.get("isCompleted"),
-                completionRate: taskSnapshot.get("completionRate"),
+                completionRate: taskSnapshot.get("completionRate")*100,
                 createdTimestamp: taskSnapshot.get("createdTimestamp"),
                 updatedTimestamp: taskSnapshot.get("updatedTimestamp"),
               };
