@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular';
 import { AuthService } from '../../services/user/auth.service';
 import { ProfileService } from '../../services/user/profile.service';
 import { Router } from '@angular/router';
@@ -20,7 +20,8 @@ export class UserProfilePage implements OnInit {
     private alertCtrl: AlertController,
     private authService: AuthService,
     private profileService: ProfileService,
-    private router: Router
+    private router: Router,
+    private toastController:ToastController
   ) { }
 
   ngOnInit() {
@@ -110,7 +111,9 @@ export class UserProfilePage implements OnInit {
             this.profileService.updatePassword(
               data.newPassword,
               data.oldPassword
-            );
+            ).then(() => {
+              this.presentToast('Password successfully updated');
+            });
           },
         },
       ],
@@ -118,6 +121,13 @@ export class UserProfilePage implements OnInit {
     await alert.present();
   }
   
+  async presentToast(message:string) {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 2000
+    });
+    toast.present();
+  }
 
 }
 
