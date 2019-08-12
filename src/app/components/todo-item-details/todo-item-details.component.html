@@ -1,11 +1,14 @@
 <ion-header padding>
   <ion-toolbar mode="ios">
-      <ion-buttons slot="start">
-          <ion-button (click)="dismissModal()">Back</ion-button>
-      </ion-buttons>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismissModal()">Cancel</ion-button>
+    </ion-buttons>
 
     <ion-title *ngIf="currentTask">Edit Task</ion-title>
     <ion-title *ngIf="!currentTask">Create Task</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="saveTask(taskForm)" [disabled]="!taskForm.valid" expand="full">Save</ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -50,8 +53,23 @@
             </ion-select>
             <ion-icon *ngIf="selectedList != ''" name="close" class="overrideButtonOverlay" (click)="selectedList = ''"
               slot="end" color="medium"></ion-icon>
+            <ion-button slot="end" fill="clear" class="overrideButtonOverlay" (click)="presentListCreatorAlert()">
+              <ion-icon name="add" slot="icon-only"></ion-icon>
+            </ion-button>
           </ion-item>
         </ion-list>
+      </ion-col>
+    </ion-row>
+    <!-- completion rate setter-->
+    <ion-row>
+      <ion-col size="12" size-sm>
+        <ion-label>Completion Rate</ion-label>
+        <ion-item class="completionRate">
+          <ion-range min="0" max="100" color="secondary" value="{{completionRate}}" [(ngModel)]="completionRate">
+            <ion-label slot="start">{{completionRate}}</ion-label>
+            <ion-label slot="end">100</ion-label>
+          </ion-range>
+        </ion-item>
       </ion-col>
     </ion-row>
     <!-- is task a full day toggle -->
