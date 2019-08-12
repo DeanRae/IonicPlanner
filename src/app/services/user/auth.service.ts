@@ -31,7 +31,8 @@ export class AuthService {
           .collection(`/userProfile/${newUserCredential.user.uid}/user_lists`)
           .doc("all_tasks")
           .set({
-            title: "All Tasks"
+            title: "All Tasks",
+            createdTimestamp: firebase.firestore.FieldValue.serverTimestamp(),
           })
       })
       .catch(error => {
