@@ -42,8 +42,8 @@ export class CalendarPage implements OnInit {
               let UTCEnd = new Date(Date.UTC(endAsDate.getUTCFullYear(), endAsDate.getUTCMonth(), endAsDate.getUTCDate()));
 
               task.id = snap.id;
-              task.startTime = taskSnapshot.get("allDay") ? UTCStart:taskSnapshot.get("startTime");
-              task.endTime = taskSnapshot.get("allDay") ? UTCEnd : taskSnapshot.get("endTime");
+              task.startTime = taskSnapshot.get("allDay") ? UTCStart:startAsDate;
+              task.endTime = taskSnapshot.get("allDay") ? UTCEnd : endAsDate;
               task.title = taskSnapshot.get("title");
               task.allDay = taskSnapshot.get("allDay");
               this.eventSource.push(task);
