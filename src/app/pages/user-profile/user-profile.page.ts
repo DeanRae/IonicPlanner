@@ -61,7 +61,12 @@ export class UserProfilePage implements OnInit {
         {
           text: 'Save',
           handler: data => {
-            this.profileService.updateName(data.firstName, data.lastName);
+            this.profileService.updateName(data.firstName, data.lastName).then(() => {
+              this.presentToast('Name successfully updated');
+            }).catch( error => {
+              console.log("Error updating name: ", error);
+            }
+            );
           },
         },
       ],
@@ -84,11 +89,11 @@ export class UserProfilePage implements OnInit {
             this.profileService
               .updateEmail(data.newEmail, data.password)
               .then(() => {
-                console.log('Email Changed Successfully');
-              })
-              .catch(error => {
-                console.log('ERROR: ' + error.message);
-              });
+                this.presentToast('Email successfully updated');
+              }).catch( error => {
+                console.log("Error updating Email: ", error);
+              }
+              );
           },
         },
       ],
