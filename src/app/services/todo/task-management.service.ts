@@ -40,19 +40,32 @@ export class TaskManagementService {
    * Creates a new task 
    * @param task 
    */
-  public async createTask(task: Task) {
+  public async  createTask(task: Task) {
     let newTaskRef: firebase.firestore.DocumentReference = this.userAllTasksListRef.collection("tasks").doc();
 
     // store id in relevant completed or uncompleted list
     this.storeTaskStatus(task, newTaskRef.id);
 
-    // add to default list
     try {
-      console.log("Document written with ID: ", newTaskRef.id, " to default list All Tasks");
+      const data = await this.userAllTasksListRef.collection("tasks").doc(newTaskRef.id).set({
+        title: task.title,
+        listId: task.listId,
+        location: task.location,
+        startTime: task.startTime,
+        endTime: task.endTime,
+        allDay: task.allDay,
+        isCompleted: task.isCompleted,
+        description: task.description,
+        subTasks: task.subTasks,
+        completionRate: task.completionRate,
+        createdTimestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+      console.log("Created task with ID: ", newTaskRef.id, " to default list All Tasks");
     }
     catch (error) {
       console.error("Error adding document: ", error);
     }
+
   }
 
 
@@ -79,25 +92,33 @@ export class TaskManagementService {
    * @param task 
    * @param taskId 
    */
-  private setTaskComplete(task: Task, taskId: string) {
+  public async setTaskComplete(task: Task, taskId: string) {
     // delete task from uncompleted tasks if it exists
-    this.removeTaskFromUncompleted(this.userAllTasksListRef.id, taskId);
-
-    this.userAllTasksListRef.collection("completed_tasks").doc(taskId).set({
-      id: taskId
-    });
-
-    // do the same for user defined lists (if any)
-    if (task.listId) {
-      // delete task from uncompleted tasks if it exists
-      this.removeTaskFromUncompleted(task.listId, taskId);
-
-      this.userListsRef.doc(task.listId).collection("completed_tasks").doc(taskId).set({
+    try {
+      await this.removeTaskFromUncompleted(this.userAllTasksListRef.id, taskId);
+      // add it to default list's completed collection
+      this.userAllTasksListRef.collection("completed_tasks").doc(taskId).set({
         id: taskId
-      });
+      })
+        .then(() => {
+          // do the same for user defined lists (if any)
+          if (task.listId) {
+            // delete task from uncompleted tasks if it exists
+            this.removeTaskFromUncompleted(task.listId, taskId).then(() => {
+              // add it to user defined list's completed collection
+              this.userListsRef.doc(task.listId).collection("completed_tasks").doc(taskId).set({
+                id: taskId
+              });
+            });
+          }
+        });
+      // set task info to be completed
+      this.getTask(taskId).update({ isCompleted: true });
+    }
+    catch (error) {
+      console.log("Error setting task as complete ", error);
     }
   }
-
   /**
    * Used as a helper method in setTaskComplete.
    * Can also be used as a standalone and removes the task from
@@ -106,7 +127,7 @@ export class TaskManagementService {
    * @param taskId 
    */
   private removeTaskFromUncompleted(listId: string, taskId: string) {
-    if (this.isTaskUncompleted(listId, taskId)) {
+    if (listId && this.isTaskUncompleted(listId, taskId)) {
       return this.userListsRef.doc(listId).collection("uncompleted_tasks")
         .doc(taskId)
         .delete();
@@ -121,7 +142,7 @@ export class TaskManagementService {
    * @param taskId 
    */
   private removeTaskFromCompleted(listId: string, taskId: string) {
-    if (this.isTaskCompleted(listId, taskId)) {
+    if (listId && this.isTaskCompleted(listId, taskId)) {
       return this.userListsRef.doc(listId).collection("completed_tasks")
         .doc(taskId)
         .delete();
@@ -135,22 +156,31 @@ export class TaskManagementService {
    * @param task 
    * @param taskId 
    */
-  private setTaskUncomplete(task: Task, taskId: string) {
-    // delete task from completed tasks if it exists
-    this.removeTaskFromCompleted(this.userAllTasksListRef.id, taskId)
-
-    this.userAllTasksListRef.collection("uncompleted_tasks").doc(taskId).set({
-      id: taskId
-    });
-
-    // do the same for user defined lists (if any)
-    if (task.listId) {
-      // delete task from uncompleted tasks if it exists
-      this.removeTaskFromCompleted(task.listId, taskId);
-
-      this.userListsRef.doc(task.listId).collection("uncompleted_tasks").doc(taskId).set({
+  public async setTaskUncomplete(task: Task, taskId: string) {
+     // delete task from uncompleted tasks if it exists
+     try {
+      await this.removeTaskFromCompleted(this.userAllTasksListRef.id, taskId);
+      // add it to default list's completed collection
+      this.userAllTasksListRef.collection("uncompleted_tasks").doc(taskId).set({
         id: taskId
-      });
+      })
+        .then(() => {
+          // do the same for user defined lists (if any)
+          if (task.listId) {
+            // delete task from uncompleted tasks if it exists
+            this.removeTaskFromCompleted(task.listId, taskId).then(() => {
+              // add it to user defined list's completed collection
+              this.userListsRef.doc(task.listId).collection("uncompleted_tasks").doc(taskId).set({
+                id: taskId
+              });
+            });
+          }
+        });
+      // set task info to be completed
+      this.getTask(taskId).update({ isCompleted: false });
+    }
+    catch (error) {
+      console.log("Error setting task as uncomplete ", error);
     }
   }
 
@@ -208,8 +238,6 @@ export class TaskManagementService {
    * @param taskId 
    */
   public async editTask(task: Task, taskId: string) {
-    console.log("Task id ", taskId);
-    console.log("task edit: ", task);
     // edit the tasks completed/uncompleted status in relevant lists
     await this.editTaskStatus(task, taskId);
     try {
@@ -226,6 +254,7 @@ export class TaskManagementService {
           isCompleted: task.isCompleted,
           description: task.description,
           subTasks: task.subTasks,
+          completionRate: task.completionRate,
           updatedTimestamp: firebase.firestore.FieldValue.serverTimestamp(),
         });
     }
@@ -291,30 +320,6 @@ export class TaskManagementService {
     return this.userAllTasksListRef
       .collection("tasks")
       .doc(taskId);
-  }
-
-  public async getTaskObject(taskId: string) {
-    try {
-      const taskSnapshot = await this.getTask(taskId).get();
-      return {
-        id: taskId,
-        title: taskSnapshot.get("title"),
-        subTasks: taskSnapshot.get("subTasks"),
-        listId: taskSnapshot.get("listId"),
-        location: taskSnapshot.get("location"),
-        description: taskSnapshot.get("description"),
-        startTime: taskSnapshot.get("startTime"),
-        endTime: taskSnapshot.get("endTime"),
-        allDay: taskSnapshot.get("allDay"),
-        isCompleted: taskSnapshot.get("isCompleted"),
-        completionRate: taskSnapshot.get("completionRate"),
-        createdTimestamp: taskSnapshot.get("createdTimestamp"),
-        updatedTimestamp: taskSnapshot.get("updatedTimestamp"),
-      };
-    }
-    catch (error) {
-      console.log("error getting and creating task object ", error);
-    }
   }
 
   /**
