@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { CalendarPage } from './calendar.page';
 import { NgCalendarModule  } from 'ionic2-calendar';
+import { TodoItemDetailsModule } from 'src/app/components/todo-item-details/todo-item-details.module';
 
 const routes: Routes = [
   {
@@ -20,6 +21,7 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
+    TodoItemDetailsModule,
     NgCalendarModule,
     RouterModule.forChild(routes)
   ],

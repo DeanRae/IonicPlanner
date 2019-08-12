@@ -3,12 +3,6 @@
     <ion-title>
       Calendar
     </ion-title>
-    <!-- <ion-title>
-      {{ viewTitle }}
-    </ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="today()">Today</ion-button>
-    </ion-buttons> -->
   </ion-toolbar>
 </ion-header>
 
@@ -51,13 +45,14 @@
     </ion-col>
   </ion-row>
 
-  <!-- <calendar [eventSource]="eventSource" [calendarMode]="calendar.mode" [currentDate]="calendar.currentDate"
-    (onEventSelected)="onEventSelected($event)" (onTitleChanged)="onViewTitleChanged($event)"
-    (onTimeSelected)="onTimeSelected($event)" startHour="6" endHour="20" step="30" startingDayWeek="1">
-  </calendar> -->
   <calendar [eventSource]="eventSource" [calendarMode]="calendar.mode" [currentDate]="calendar.currentDate"
     (onCurrentDateChanged)="onCurrentDateChanged($event)" (onRangeChanged)="reloadSource(startTime, endTime)"
     (onEventSelected)="onEventSelected($event)" (onTitleChanged)="onViewTitleChanged($event)"
     (onTimeSelected)="onTimeSelected($event)" step="30" noEventsLabel="No Tasks">
   </calendar>
+  <ion-fab horizontal="end" vertical="bottom" slot="fixed">
+    <ion-fab-button color="primary" (click)="presentTaskModal()">
+      <ion-icon mode="md" name="create"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
