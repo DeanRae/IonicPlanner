@@ -10,6 +10,9 @@
 .list-active {
     --ion-item-background: var(--ion-color-primary);
     --ion-item-color: #fff;
+    ion-button {
+        --color: #fff;
+    }
 }
 
 .bold, .list-active {
@@ -37,12 +40,12 @@
     padding: 0px;
 }
 
-// .complete-button {
-//     ion-button {
-       
-//     }
-// }
-
 .short-card {
-    max-height: 120px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+ion-grid {
+    margin-bottom: 15px;
+    margin-top: 15px;
 }
