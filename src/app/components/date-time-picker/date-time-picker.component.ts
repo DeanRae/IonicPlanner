@@ -168,11 +168,9 @@ export class DateTimePickerComponent implements ControlValueAccessor, OnInit {
     if (isNullOrUndefined(this.selectedDate.value)) {
       let currentDateTime = moment(new Date()).format("D MMMM YYYY h:mm a");
       this.selectedDate.setValue(currentDateTime);
-      console.log(this.selectedDate.value);
       this.onChange(this.selectedDate.value);
     } else {
       this.selectedDate.setValue(value);
-      console.log(this.selectedDate.value);
       this.onChange(this.selectedDate.value);
     }
   }
