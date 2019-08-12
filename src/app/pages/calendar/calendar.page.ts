@@ -4,8 +4,9 @@ import { Task } from 'src/app/interfaces/task';
 import { TaskListsPage } from '../task-lists/task-lists.page';
 import { TaskManagementService } from 'src/app/services/todo/task-management.service';
 import { CalendarComponent } from 'ionic2-calendar/calendar';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import * as moment from 'moment';
+import { TodoItemDetailsComponent } from 'src/app/components/todo-item-details/todo-item-details.component';
 
 /**
  * Based on tut from https://devdactic.com/ionic-4-calendar-app/
@@ -24,7 +25,7 @@ export class CalendarPage implements OnInit {
   }
   @ViewChild(CalendarComponent) myCal: CalendarComponent;
 
-  constructor(private listManagementService: ListManagementService, private taskManagementService: TaskManagementService, private alertController:AlertController) {
+  constructor(private listManagementService: ListManagementService, private taskManagementService: TaskManagementService, private alertController:AlertController, private modalController:ModalController) {
     this.listManagementService
       .getUserAllTasksList()
       .collection("uncompleted_tasks")
@@ -35,9 +36,14 @@ export class CalendarPage implements OnInit {
             .get()
             .then(taskSnapshot => {
               let task: any = taskSnapshot.data();
+              let startAsDate = taskSnapshot.get("startTime");
+              let UTCStart = new Date(Date.UTC(startAsDate.getUTCFullYear(), startAsDate.getUTCMonth(), startAsDate.getUTCDate()));
+              let endAsDate = taskSnapshot.get("endTime");
+              let UTCEnd = new Date(Date.UTC(endAsDate.getUTCFullYear(), endAsDate.getUTCMonth(), endAsDate.getUTCDate()));
+
               task.id = snap.id;
-              task.startTime = new Date(taskSnapshot.get("startTime"));
-              task.endTime = new Date(taskSnapshot.get("endTime"));
+              task.startTime = taskSnapshot.get("allDay") ? UTCStart:startAsDate;
+              task.endTime = taskSnapshot.get("allDay") ? UTCEnd : endAsDate;
               task.title = taskSnapshot.get("title");
               task.allDay = taskSnapshot.get("allDay");
               this.eventSource.push(task);
@@ -100,8 +106,20 @@ export class CalendarPage implements OnInit {
     this.calendar.mode = mode;
   }
 
-
   today() {
     this.calendar.currentDate = new Date();
+  }
+
+    /**
+   * Presents the task creation/edit modal
+   */
+  async presentTaskModal(taskId: string) {
+    const modal = await this.modalController.create({
+      component: TodoItemDetailsComponent,
+      componentProps: {
+        'id': taskId
+      }
+    });
+    return await modal.present();
   }
 }
