@@ -6,6 +6,8 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { HomePage } from './home.page';
+import { TodoItemDetailsModule } from 'src/app/components/todo-item-details/todo-item-details.module';
+import { ExpandableModule } from 'src/app/components/expandable/expandable.module';
 
 const routes: Routes = [
   {
@@ -19,6 +21,8 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
+    TodoItemDetailsModule,
+    ExpandableModule,
     RouterModule.forChild(routes)
   ],
   declarations: [HomePage]

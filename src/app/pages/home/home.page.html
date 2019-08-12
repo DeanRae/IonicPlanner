@@ -1,9 +1,107 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>home</ion-title>
+<ion-header padding>
+  <ion-toolbar mode="ios">
+    <ion-title>Home</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content padding>
+  <ion-grid padding no-margin>
+    <ion-row>
+      <ion-col size="12" size-sm>
+        <h1>Welcome {{userProfile?.firstName}}</h1>
+        <ion-button fill="outline" expand="block" (click)="presentTaskModal()" margin>Create New Task</ion-button>
+        <div *ngFor="let list of lists; let i = index;">
+          <ion-item tappable (click)="toggleList(i)">
+            <h4>{{list.title}}</h4>
+            <ion-badge slot="end" color="medium">{{list.tasks.length}}</ion-badge>
+            <ion-icon slot="end" name="arrow-dropdown" *ngIf="!list.open"></ion-icon>
+            <ion-icon slot="end" name="arrow-dropup" *ngIf="list.open"></ion-icon>
+          </ion-item>
+          <!-- tasks -->
+          <ion-list *ngIf="list.tasks && list.open" lines="none" no-padding>
+            <div *ngIf="!list.tasks.length && list.listName == 'dueToday'">
+              <p text-center> No Tasks Due Today </p>
+            </div>
+            <div *ngIf="!list.tasks.length && list.listName == 'startToday'">
+              <p text-center> No Tasks Starting Today </p>
+            </div>
+            <div *ngIf="list.tasks.length" class="divBackground" padding>
+              <ion-card (click)="expandCard(task)" *ngFor="let task of list.tasks">
+                <ion-card-header>
+                  <ion-card-subtitle>Due Date: {{task.details.endTime}}</ion-card-subtitle>
+                  <ion-card-title>{{task.details.title}}</ion-card-title>
+                  <ion-list>
+                    <ion-list-header>
+                      <ion-label>Completion Rate: {{task.details.completionRate*100}}%</ion-label>
+                    </ion-list-header>
+                    <ion-progress-bar color="secondary" value="{{task.details.completionRate/100}}"></ion-progress-bar>
+                  </ion-list>
+                  <ion-item *ngIf="!task.expanded" lines="none">
+                    <ion-icon name="more" slot="end"></ion-icon>
+                  </ion-item>
+                </ion-card-header>
+                <!-- task details -->
+                <ion-card-content class='short-card'>
+                  <app-expandable expandHeight="500px" [expanded]="task.expanded">
+                    <ion-label class="bold">Start Date: </ion-label>
+                    {{task.details.startTime}}
+                    <br>
+                    <ion-label class="bold">Location: </ion-label>
+                    {{task.details.location}}
+                    <br>
+                    <ion-label class="bold">Description: </ion-label>
+                    {{task.details.description}}
+                    <br>
+                    <!-- subtasks -->
+                    <ion-label class="bold">Sub-Tasks: </ion-label>
+                    <ion-list class="subTask">
+                      <ion-item *ngIf="!task.details.subTasks.length" lines="none">
+                        <p>This task currently has no sub-tasks</p>
+                      </ion-item>
+                      <ion-item *ngFor="let subtask of task.details.subTasks; let j = index" lines="none">
+                        <ion-label>{{subtask?.subTask}}</ion-label>
+                        <ion-checkbox slot="start" [(ngModel)]="subtask.isChecked"
+                          (click)="updateSubtasks(task.details);$event.stopPropagation();"></ion-checkbox>
+                        <ion-icon class="overrideButtonOverlay" name="trash" slot="end"
+                          (click)="deleteSubTask(j,task.details);$event.stopPropagation();">
+                        </ion-icon>
+                      </ion-item>
+                    </ion-list>
+                    <!-- buttons -->
+                    <ion-grid no-padding class="button-grid">
+                      <ion-row no-padding>
+                        <ion-col *ngIf="task.details.isCompleted" size="12" size-sm>
+                          <ion-button expand="full" color="danger"
+                            (click)="confirmTaskDeletionAlert(task.details); $event.stopPropagation();">
+                            DELETE
+                          </ion-button>
+                        </ion-col>
+                        <ion-col *ngIf="!task.details.isCompleted" size="10" no-padding>
+                          <ion-button expand="full"
+                            (click)="completeTask(task.details, task.details.id);$event.stopPropagation();">COMPLETE
+                          </ion-button>
+                        </ion-col>
+                        <ion-col *ngIf="!task.details.isCompleted" size="2" no-padding>
+                          <ion-button (click)="presentTaskActionSheet(task.details);$event.stopPropagation();"
+                            fill="clear">
+                            <ion-icon mode="md" name="more" slot="icon-only"></ion-icon>
+                          </ion-button>
+                        </ion-col>
+                      </ion-row>
+                    </ion-grid>
+                  </app-expandable>
+                </ion-card-content>
+              </ion-card>
+            </div>
+          </ion-list>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 
+  <ion-fab horizontal="end" vertical="bottom" slot="fixed">
+    <ion-fab-button color="primary" (click)="presentTaskModal()">
+      <ion-icon mode="md" name="create"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
