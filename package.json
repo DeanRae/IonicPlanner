@@ -29,7 +29,7 @@
     "core-js": "^2.5.4",
     "firebase": "^6.3.1",
     "ionic2-calendar": "^0.5.2",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "rxjs": "~6.5.1",
     "tslib": "^1.9.0",
     "zone.js": "~0.8.29"
